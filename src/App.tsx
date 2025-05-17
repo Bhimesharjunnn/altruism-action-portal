@@ -13,12 +13,6 @@ import CausesPage from "./pages/Causes";
 import CauseDetailsPage from "./pages/CauseDetails";
 import SponsorFormPage from "./pages/SponsorForm";
 import LoginPage from "./pages/Login";
-import ClaimFormPage from "./pages/ClaimForm";
-import OtpVerificationPage from "./pages/OtpVerification";
-import ClaimConfirmedPage from "./pages/ClaimConfirmed";
-import ClaimStatusPage from "./pages/ClaimStatus";
-import JoinWaitlistPage from "./pages/JoinWaitlist";
-import WaitlistConfirmationPage from "./pages/WaitlistConfirmation";
 
 // Dashboard Pages
 import SponsorDashboard from "./pages/dashboard/SponsorDashboard";
@@ -41,16 +35,6 @@ const App = () => (
             <Route path="/cause/:id" element={<CauseDetailsPage />} />
             <Route path="/sponsor/new" element={<SponsorFormPage />} />
             <Route path="/login" element={<LoginPage />} />
-            
-            {/* Claim Routes */}
-            <Route path="/claim/:id" element={<ClaimFormPage />} />
-            <Route path="/claim/:id/verify" element={<OtpVerificationPage />} />
-            <Route path="/claim/:id/confirmed" element={<ClaimConfirmedPage />} />
-            <Route path="/claim/:id/status" element={<ClaimStatusPage />} />
-            
-            {/* Waitlist Routes */}
-            <Route path="/waitlist/:id" element={<JoinWaitlistPage />} />
-            <Route path="/waitlist/:id/confirmed" element={<WaitlistConfirmationPage />} />
             
             {/* Dashboard Routes */}
             <Route path="/dashboard/sponsor" element={<SponsorDashboard />} />
