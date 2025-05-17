@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -9,7 +8,7 @@ const Index = () => {
   const navigate = useNavigate();
   
   // Featured causes (would normally be from API)
-  const featuredCauses = [
+  const causes = [
     {
       id: '1',
       title: 'Clean Water Initiative',
@@ -21,7 +20,7 @@ const Index = () => {
     },
     {
       id: '2',
-      title: 'Children's Education Fund',
+      title: "Children's Education Fund",
       description: 'Supporting education for underprivileged children worldwide.',
       imageUrl: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
       raised: 8700,
@@ -93,7 +92,7 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredCauses.map((cause) => (
+            {causes.map((cause) => (
               <Card key={cause.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <img 
                   src={cause.imageUrl} 

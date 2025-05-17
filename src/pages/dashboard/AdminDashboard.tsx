@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
@@ -39,7 +38,7 @@ const AdminDashboard = () => {
     {
       id: '2',
       sponsor: 'Green Future Fund',
-      cause: 'Children's Education Fund',
+      cause: "Children's Education Fund",
       amount: 3500,
       date: '2025-04-02'
     }

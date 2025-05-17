@@ -24,7 +24,7 @@ const SponsorDashboard = () => {
     },
     {
       id: '2',
-      title: 'Children's Education Fund',
+      title: "Children's Education Fund",
       description: 'Supporting education for underprivileged children worldwide.',
       imageUrl: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
       amount: 3500,

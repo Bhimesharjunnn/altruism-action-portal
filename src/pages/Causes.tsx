@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
@@ -22,7 +21,7 @@ const CausesPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   
   // Mock causes data (would come from API)
-  const allCauses = [
+  const causes = [
     {
       id: '1',
       title: 'Clean Water Initiative',
@@ -35,7 +34,7 @@ const CausesPage = () => {
     },
     {
       id: '2',
-      title: 'Children's Education Fund',
+      title: "Children's Education Fund",
       description: 'Supporting education for underprivileged children worldwide.',
       imageUrl: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
       raised: 8700,
@@ -94,7 +93,7 @@ const CausesPage = () => {
   ];
 
   // Filter causes based on search and filters
-  const filteredCauses = allCauses.filter(cause => {
+  const filteredCauses = causes.filter(cause => {
     const matchesSearch = cause.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          cause.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'all' || cause.category === categoryFilter;

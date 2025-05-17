@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
@@ -37,7 +36,10 @@ const SponsorFormPage = () => {
   // Mock causes data (would fetch from API)
   const causes = [
     { id: '1', title: 'Clean Water Initiative' },
-    { id: '2', title: 'Children's Education Fund' },
+    {
+      title: "Children's Education Fund",
+      id: '2',
+    },
     { id: '3', title: 'Women Entrepreneurs' },
     { id: '4', title: 'Wildlife Conservation' },
   ];
