@@ -4,77 +4,29 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
+import OnboardingWizard from '@/components/sponsor/OnboardingWizard';
 
 const SponsorFormPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const causeId = searchParams.get('causeId');
   const { toast } = useToast();
-  
-  // Form state
-  const [form, setForm] = useState({
-    organizationName: '',
-    contactName: '',
-    email: '',
-    phone: '',
-    sponsorshipAmount: '',
-    selectedCause: causeId || '',
-    message: '',
-  });
   const [isLoading, setIsLoading] = useState(false);
   
-  // Mock causes data (would fetch from API)
-  const causes = [
-    { id: '1', title: 'Clean Water Initiative' },
-    {
-      title: "Children's Education Fund",
-      id: '2',
-    },
-    { id: '3', title: 'Women Entrepreneurs' },
-    { id: '4', title: 'Wildlife Conservation' },
-  ];
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setForm({
-      ...form,
-      [name]: value
-    });
-  };
-
-  const handleSelectChange = (value: string) => {
-    setForm({
-      ...form,
-      selectedCause: value
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmitComplete = async (formData) => {
     setIsLoading(true);
     
-    // This would normally send data to your backend
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
         title: "Sponsorship Request Submitted",
-        description: "Thank you for your interest! Our team will contact you soon.",
+        description: "Thank you for your sponsorship! You'll be redirected to your dashboard.",
       });
       
-      navigate('/causes');
+      navigate('/dashboard/sponsor');
     } catch (error) {
       toast({
         title: "Submission Error",
@@ -100,7 +52,7 @@ const SponsorFormPage = () => {
           
           <h1 className="text-3xl font-bold mb-2">Become a Sponsor</h1>
           <p className="text-lg text-gray-700 mb-6">
-            Complete the form below to start your sponsorship journey
+            Complete our simple wizard to start your sponsorship journey
           </p>
         </div>
       </div>
@@ -110,106 +62,11 @@ const SponsorFormPage = () => {
           <div className="lg:col-span-2">
             <Card>
               <CardContent className="p-6">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="organizationName">Organization Name</Label>
-                      <Input
-                        id="organizationName"
-                        name="organizationName"
-                        value={form.organizationName}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="contactName">Contact Name</Label>
-                      <Input
-                        id="contactName"
-                        name="contactName"
-                        value={form.contactName}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={form.email}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        value={form.phone}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="selectedCause">Cause to Sponsor</Label>
-                      <Select 
-                        value={form.selectedCause} 
-                        onValueChange={handleSelectChange}
-                        required
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a cause" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {causes.map((cause) => (
-                            <SelectItem key={cause.id} value={cause.id}>
-                              {cause.title}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="sponsorshipAmount">Sponsorship Amount ($)</Label>
-                      <Input
-                        id="sponsorshipAmount"
-                        name="sponsorshipAmount"
-                        type="number"
-                        min="100"
-                        value={form.sponsorshipAmount}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="message">Message (Optional)</Label>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      value={form.message}
-                      onChange={handleInputChange}
-                      rows={4}
-                    />
-                  </div>
-                  
-                  <Button type="submit" disabled={isLoading} className="w-full">
-                    {isLoading ? 'Submitting...' : 'Submit Sponsorship Request'}
-                  </Button>
-                </form>
+                <OnboardingWizard 
+                  initialCauseId={causeId} 
+                  onComplete={handleSubmitComplete}
+                  isSubmitting={isLoading}
+                />
               </CardContent>
             </Card>
           </div>
@@ -238,6 +95,14 @@ const SponsorFormPage = () => {
                   <li className="flex">
                     <div className="mr-2 text-primary-600">✓</div>
                     <span>Employee engagement opportunities</span>
+                  </li>
+                  <li className="flex">
+                    <div className="mr-2 text-primary-600">✓</div>
+                    <span>Custom QR code for your totes</span>
+                  </li>
+                  <li className="flex">
+                    <div className="mr-2 text-primary-600">✓</div>
+                    <span>Real-time analytics dashboard</span>
                   </li>
                 </ul>
                 
