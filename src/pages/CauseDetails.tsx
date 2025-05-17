@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -90,15 +89,9 @@ const CauseDetailsPage = () => {
     if (cause.status === 'open') {
       navigate(`/sponsor/new?causeId=${id}`);
     } else if (cause.status === 'sponsored') {
-      toast({
-        title: "Tote Claimed",
-        description: "You've successfully claimed a tote for this cause!",
-      });
-    } else {
-      toast({
-        title: "Added to Waitlist",
-        description: "You've been added to the waitlist for this cause!",
-      });
+      navigate(`/claim/${id}`);
+    } else if (cause.status === 'waitlist') {
+      navigate(`/waitlist/${id}`);
     }
   };
 

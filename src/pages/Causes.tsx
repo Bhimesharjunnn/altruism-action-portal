@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -106,15 +105,9 @@ const CausesPage = () => {
   const handleAction = (causeId: string, status: string) => {
     // This would connect to real API in production
     if (status === 'sponsored') {
-      toast({
-        title: "Tote Claimed",
-        description: "You've successfully claimed a tote for this cause!",
-      });
+      navigate(`/claim/${causeId}`);
     } else if (status === 'waitlist') {
-      toast({
-        title: "Added to Waitlist",
-        description: "You've been added to the waitlist for this cause!",
-      });
+      navigate(`/waitlist/${causeId}`);
     } else {
       navigate(`/sponsor/new?causeId=${causeId}`);
     }
