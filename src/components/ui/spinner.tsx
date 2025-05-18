@@ -1,9 +1,11 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Loader } from "lucide-react";
+import { Loader, LucideProps } from "lucide-react";
 
-interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SpinnerProps extends Omit<LucideProps, "ref"> {
+  className?: string;
+}
 
 export function Spinner({ className, ...props }: SpinnerProps) {
   return (

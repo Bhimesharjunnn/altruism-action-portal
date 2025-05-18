@@ -30,6 +30,10 @@ import SponsorDashboard from "./pages/dashboard/SponsorDashboard";
 import ClaimerDashboard from "./pages/dashboard/ClaimerDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 
+// Admin Pages
+import CausesManagement from "./pages/admin/CausesManagement";
+import QrScanner from "./pages/admin/QrScanner";
+
 // Create QueryClient once, outside of component
 const queryClient = new QueryClient();
 
@@ -64,6 +68,10 @@ const App: React.FC = () => {
                 <Route path="/dashboard/sponsor" element={<SponsorDashboard />} />
                 <Route path="/dashboard/claimer" element={<ClaimerDashboard />} />
                 <Route path="/dashboard/admin" element={<AdminDashboard />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin/causes" element={<CausesManagement />} />
+                <Route path="/admin/qr-scanner" element={<QrScanner />} />
                 
                 {/* Catch-all Route */}
                 <Route path="*" element={<NotFound />} />
