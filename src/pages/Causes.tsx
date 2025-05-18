@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -12,11 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from '@/components/ui/use-toast';
 
 const CausesPage = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -104,17 +101,11 @@ const CausesPage = () => {
   });
 
   const handleAction = (causeId: string, status: string) => {
-    // This would connect to real API in production
+    // Direct to appropriate route based on cause status
     if (status === 'sponsored') {
-      toast({
-        title: "Tote Claimed",
-        description: "You've successfully claimed a tote for this cause!",
-      });
+      navigate(`/claim/${causeId}`);
     } else if (status === 'waitlist') {
-      toast({
-        title: "Added to Waitlist",
-        description: "You've been added to the waitlist for this cause!",
-      });
+      navigate(`/waitlist/${causeId}`);
     } else {
       navigate(`/sponsor/new?causeId=${causeId}`);
     }

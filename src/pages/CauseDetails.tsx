@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -6,12 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useToast } from '@/components/ui/use-toast';
 
 const CauseDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
   
   // Mock cause data (would be fetched from API using the id)
   const cause = {
@@ -90,15 +87,9 @@ const CauseDetailsPage = () => {
     if (cause.status === 'open') {
       navigate(`/sponsor/new?causeId=${id}`);
     } else if (cause.status === 'sponsored') {
-      toast({
-        title: "Tote Claimed",
-        description: "You've successfully claimed a tote for this cause!",
-      });
+      navigate(`/claim/${id}`);
     } else {
-      toast({
-        title: "Added to Waitlist",
-        description: "You've been added to the waitlist for this cause!",
-      });
+      navigate(`/waitlist/${id}`);
     }
   };
 

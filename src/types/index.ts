@@ -35,3 +35,49 @@ export interface Sponsor {
   amount: number;
   createdAt: Date;
 }
+
+export interface ToteClaim {
+  _id?: string;
+  causeId: string;
+  userId: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  organization: string;
+  shippingAddress: {
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  status: "pending" | "verified" | "processing" | "shipped" | "delivered";
+  trackingNumber?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Waitlist {
+  _id?: string;
+  causeId: string;
+  userId: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  organization: string;
+  message?: string;
+  notifyEmail: boolean;
+  notifySms: boolean;
+  position: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ClaimStatus {
+  id: string;
+  label: string;
+  date: string;
+  description: string;
+  completed: boolean;
+  current: boolean;
+}
+
