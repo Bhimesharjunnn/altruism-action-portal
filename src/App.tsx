@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,43 +28,48 @@ import SponsorDashboard from "./pages/dashboard/SponsorDashboard";
 import ClaimerDashboard from "./pages/dashboard/ClaimerDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 
+// Create QueryClient once, outside of component
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/causes" element={<CausesPage />} />
-            <Route path="/cause/:id" element={<CauseDetailsPage />} />
-            <Route path="/sponsor/new" element={<SponsorFormPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            
-            {/* Claimer Journey Routes */}
-            <Route path="/claim/:id" element={<ClaimFormPage />} />
-            <Route path="/claim/verify" element={<OtpVerificationPage />} />
-            <Route path="/claim/confirmed" element={<ClaimConfirmedPage />} />
-            <Route path="/claim/status/:id" element={<ClaimStatusPage />} />
-            <Route path="/waitlist/:id" element={<JoinWaitlistPage />} />
-            <Route path="/waitlist/confirmed" element={<WaitlistConfirmationPage />} />
-            
-            {/* Dashboard Routes */}
-            <Route path="/dashboard/sponsor" element={<SponsorDashboard />} />
-            <Route path="/dashboard/claimer" element={<ClaimerDashboard />} />
-            <Route path="/dashboard/admin" element={<AdminDashboard />} />
-            
-            {/* Catch-all Route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+const App: React.FC = () => {
+  return (
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/causes" element={<CausesPage />} />
+                <Route path="/cause/:id" element={<CauseDetailsPage />} />
+                <Route path="/sponsor/new" element={<SponsorFormPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                
+                {/* Claimer Journey Routes */}
+                <Route path="/claim/:id" element={<ClaimFormPage />} />
+                <Route path="/claim/verify" element={<OtpVerificationPage />} />
+                <Route path="/claim/confirmed" element={<ClaimConfirmedPage />} />
+                <Route path="/claim/status/:id" element={<ClaimStatusPage />} />
+                <Route path="/waitlist/:id" element={<JoinWaitlistPage />} />
+                <Route path="/waitlist/confirmed" element={<WaitlistConfirmationPage />} />
+                
+                {/* Dashboard Routes */}
+                <Route path="/dashboard/sponsor" element={<SponsorDashboard />} />
+                <Route path="/dashboard/claimer" element={<ClaimerDashboard />} />
+                <Route path="/dashboard/admin" element={<AdminDashboard />} />
+                
+                {/* Catch-all Route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
+  );
+};
 
 export default App;

@@ -19,7 +19,13 @@ interface CauseSelectionStepProps {
     phone: string;
     selectedCause: string;
   };
-  updateFormData: (data: Partial<typeof formData>) => void;
+  updateFormData: (data: Partial<{
+    organizationName: string;
+    contactName: string;
+    email: string;
+    phone: string;
+    selectedCause: string;
+  }>) => void;
 }
 
 const CauseSelectionStep = ({ formData, updateFormData }: CauseSelectionStepProps) => {

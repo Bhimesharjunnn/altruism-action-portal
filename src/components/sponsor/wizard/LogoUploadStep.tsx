@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -11,7 +12,10 @@ interface LogoUploadStepProps {
     logoUrl: string;
     message: string;
   };
-  updateFormData: (data: Partial<typeof formData>) => void;
+  updateFormData: (data: Partial<{
+    logoUrl: string;
+    message: string;
+  }>) => void;
 }
 
 const LogoUploadStep = ({ formData, updateFormData }: LogoUploadStepProps) => {

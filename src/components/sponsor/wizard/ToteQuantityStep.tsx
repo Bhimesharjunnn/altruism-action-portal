@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
@@ -8,7 +9,9 @@ interface ToteQuantityStepProps {
   formData: {
     toteQuantity: number;
   };
-  updateFormData: (data: Partial<typeof formData>) => void;
+  updateFormData: (data: Partial<{
+    toteQuantity: number;
+  }>) => void;
 }
 
 const ToteQuantityStep = ({ formData, updateFormData }: ToteQuantityStepProps) => {
