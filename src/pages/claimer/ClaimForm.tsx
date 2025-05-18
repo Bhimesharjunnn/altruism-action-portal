@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Card, CardContent } from '@/components/ui/card';
+import { toast } from '@/components/ui/use-toast';
 
 const claimFormSchema = z.object({
   fullName: z.string().min(2, 'Full name is required'),
@@ -34,6 +35,8 @@ type ClaimFormValues = z.infer<typeof claimFormSchema>;
 const ClaimFormPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isFromWaitlist = searchParams.get('source') === 'waitlist';
   
   // Mock cause data (in production would be fetched from API)
   const cause = {
@@ -57,6 +60,30 @@ const ClaimFormPage = () => {
       zipCode: '',
     },
   });
+  
+  // Check for waitlist data on mount
+  useEffect(() => {
+    if (isFromWaitlist) {
+      const waitlistData = sessionStorage.getItem('waitlistClaimData');
+      if (waitlistData) {
+        try {
+          const data = JSON.parse(waitlistData);
+          // Pre-fill the form with waitlist data
+          form.setValue('fullName', data.fullName || '');
+          form.setValue('email', data.email || '');
+          form.setValue('phone', data.phone || '');
+          form.setValue('organization', data.organization || '');
+          
+          toast({
+            title: "Welcome back!",
+            description: "Your information has been pre-filled from your waitlist registration.",
+          });
+        } catch (error) {
+          console.error('Error parsing waitlist data:', error);
+        }
+      }
+    }
+  }, [isFromWaitlist, form]);
   
   const onSubmit = (data: ClaimFormValues) => {
     // In production, this would submit to API

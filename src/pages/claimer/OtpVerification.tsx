@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,7 +14,9 @@ import { toast } from '@/components/ui/use-toast';
 
 const OtpVerificationPage = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<string>('email');
+  const [searchParams] = useSearchParams();
+  const fromWaitlist = searchParams.get('source') === 'waitlist';
+  const [activeTab, setActiveTab] = useState<string>(fromWaitlist ? 'phone' : 'email');
   const [emailOtp, setEmailOtp] = useState<string>('');
   const [phoneOtp, setPhoneOtp] = useState<string>('');
   const [formData, setFormData] = useState<any>(null);
@@ -29,9 +31,17 @@ const OtpVerificationPage = () => {
       navigate('/causes');
     }
     
+    // For waitlist users, we might skip email verification if they've already verified
+    if (fromWaitlist) {
+      toast({
+        title: "Waitlist Member Detected",
+        description: "Since you've already verified your email, you only need to verify your phone number.",
+      });
+    }
+    
     // In a real app, this would trigger API calls to send OTPs
     console.log('Sending verification codes...');
-  }, [navigate]);
+  }, [navigate, fromWaitlist]);
   
   const verifyEmail = () => {
     // Mock verification
@@ -61,6 +71,16 @@ const OtpVerificationPage = () => {
       });
       // Store verification status
       sessionStorage.setItem('verificationComplete', 'true');
+      
+      // Add fromWaitlist flag if applicable
+      if (fromWaitlist) {
+        const claimData = JSON.parse(sessionStorage.getItem('claimFormData') || '{}');
+        sessionStorage.setItem('claimFormData', JSON.stringify({
+          ...claimData,
+          fromWaitlist: true
+        }));
+      }
+      
       navigate('/claim/confirmed');
     } else {
       toast({

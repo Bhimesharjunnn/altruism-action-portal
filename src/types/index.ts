@@ -54,6 +54,7 @@ export interface ToteClaim {
   trackingNumber?: string;
   createdAt: Date;
   updatedAt: Date;
+  fromWaitlist?: boolean;
 }
 
 export interface Waitlist {
@@ -70,6 +71,10 @@ export interface Waitlist {
   position: number;
   createdAt: Date;
   updatedAt: Date;
+  status: "waiting" | "notified" | "claimed" | "expired";
+  magicLinkToken?: string;
+  magicLinkSentAt?: Date;
+  magicLinkExpires?: Date;
 }
 
 export interface ClaimStatus {
@@ -81,3 +86,11 @@ export interface ClaimStatus {
   current: boolean;
 }
 
+export interface MagicLinkPayload {
+  token: string;
+  userId: string;
+  waitlistId: string;
+  causeId: string;
+  email: string;
+  expires: Date;
+}

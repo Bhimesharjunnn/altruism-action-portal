@@ -22,6 +22,8 @@ import ClaimConfirmedPage from "./pages/claimer/ClaimConfirmed";
 import ClaimStatusPage from "./pages/claimer/ClaimStatus";
 import JoinWaitlistPage from "./pages/claimer/JoinWaitlist";
 import WaitlistConfirmationPage from "./pages/claimer/WaitlistConfirmation";
+import MagicLinkClaimPage from "./pages/claimer/MagicLinkClaim";
+import WaitlistEmailPreviewPage from "./pages/claimer/WaitlistEmailPreview";
 
 // Dashboard Pages
 import SponsorDashboard from "./pages/dashboard/SponsorDashboard";
@@ -55,6 +57,8 @@ const App: React.FC = () => {
                 <Route path="/claim/status/:id" element={<ClaimStatusPage />} />
                 <Route path="/waitlist/:id" element={<JoinWaitlistPage />} />
                 <Route path="/waitlist/confirmed" element={<WaitlistConfirmationPage />} />
+                <Route path="/claim/magic-link" element={<MagicLinkClaimPage />} />
+                <Route path="/demo/waitlist-email" element={<WaitlistEmailPreviewPage />} />
                 
                 {/* Dashboard Routes */}
                 <Route path="/dashboard/sponsor" element={<SponsorDashboard />} />

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Check, Clock, Mail } from 'lucide-react';
+import { Check, Clock, Mail, Bell } from 'lucide-react';
 
 const WaitlistConfirmationPage = () => {
   const navigate = useNavigate();
@@ -101,8 +101,14 @@ const WaitlistConfirmationPage = () => {
             <CardContent className="p-6">
               <h3 className="font-medium text-lg mb-2">What's Next?</h3>
               <p className="text-sm text-gray-600 mb-4">
-                When totes become available for this cause, you'll be notified based on your preferences. You'll need to claim your totes within 48 hours.
+                When totes become available for this cause, you'll receive a special link via email that will allow you to quickly claim your totes with your information pre-filled.
               </p>
+              <div className="flex items-start space-x-3 mb-4 p-3 bg-blue-50 rounded-md">
+                <Bell className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-blue-800">
+                  <span className="font-medium">Important:</span> Be sure to check your inbox (and spam folder) for an email from <span className="font-medium">notifications@toteclaimers.org</span> when the cause becomes sponsored.
+                </p>
+              </div>
               <Button 
                 variant="outline"
                 className="w-full"
