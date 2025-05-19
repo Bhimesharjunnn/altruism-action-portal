@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Check } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Separator } from '@/components/ui/separator';
+import { format } from 'date-fns';
 
 interface ConfirmationStepProps {
   formData: {
@@ -15,6 +16,14 @@ interface ConfirmationStepProps {
     toteQuantity: number;
     logoUrl: string;
     message: string;
+    distributionPoints?: string[];
+    distributionDate?: Date;
+    demographics?: {
+      ageGroups: string[];
+      income: string;
+      education: string;
+      other: string;
+    };
   };
 }
 
@@ -35,6 +44,19 @@ const ConfirmationStep = ({ formData }: ConfirmationStepProps) => {
   
   // Mock QR code value
   const qrValue = `https://causeconnect.org/claim/${formData.selectedCause}?sponsor=${encodeURIComponent(formData.organizationName)}`;
+
+  // Format demographic information
+  const formatDemographics = () => {
+    const demo = formData.demographics;
+    if (!demo) return 'Not specified';
+    
+    const parts = [];
+    if (demo.ageGroups && demo.ageGroups.length > 0) parts.push(`Ages: ${demo.ageGroups.join(', ')}`);
+    if (demo.income) parts.push(`Income: ${demo.income.replace('-', ' ').replace(/^\w/, c => c.toUpperCase())}`);
+    if (demo.education) parts.push(`Education: ${demo.education.replace('-', ' ').replace(/^\w/, c => c.toUpperCase())}`);
+    
+    return parts.length > 0 ? parts.join(' • ') : 'Not specified';
+  };
 
   return (
     <div className="space-y-6">
@@ -91,6 +113,50 @@ const ConfirmationStep = ({ formData }: ConfirmationStepProps) => {
                 <li className="flex justify-between text-lg">
                   <span className="font-semibold">Total:</span>
                   <span className="font-bold">${totalCost.toLocaleString()}</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+          
+          {/* Distribution Information Card */}
+          <Card>
+            <CardContent className="p-4">
+              <h3 className="font-semibold mb-3">Distribution Information</h3>
+              <ul className="space-y-3">
+                {/* Distribution Date */}
+                <li>
+                  <span className="text-gray-600 block">Distribution Date:</span>
+                  <span className="font-medium">
+                    {formData.distributionDate 
+                      ? format(formData.distributionDate, "MMMM d, yyyy") 
+                      : "Not specified"}
+                  </span>
+                </li>
+                
+                {/* Distribution Points */}
+                <li>
+                  <span className="text-gray-600 block">Distribution Points:</span>
+                  {formData.distributionPoints && formData.distributionPoints.length > 0 ? (
+                    <ul className="list-disc pl-5 mt-1">
+                      {formData.distributionPoints.map((point, i) => (
+                        <li key={i} className="font-medium text-sm">{point}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="font-medium">None specified</span>
+                  )}
+                </li>
+                
+                {/* Demographics */}
+                <li>
+                  <span className="text-gray-600 block">Target Demographics:</span>
+                  <span className="font-medium">{formatDemographics()}</span>
+                  
+                  {formData.demographics?.other && (
+                    <div className="mt-1 text-sm italic">
+                      "{formData.demographics.other}"
+                    </div>
+                  )}
                 </li>
               </ul>
             </CardContent>

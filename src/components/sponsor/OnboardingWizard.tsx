@@ -5,6 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import CauseSelectionStep from './wizard/CauseSelectionStep';
 import ToteQuantityStep from './wizard/ToteQuantityStep';
 import LogoUploadStep from './wizard/LogoUploadStep';
+import DistributionInfoStep from './wizard/DistributionInfoStep';
 import ConfirmationStep from './wizard/ConfirmationStep';
 
 interface OnboardingWizardProps {
@@ -28,13 +29,21 @@ const OnboardingWizard = ({
     toteQuantity: 50,
     logoUrl: '',
     message: '',
+    distributionPoints: [],
+    distributionDate: undefined,
+    demographics: {
+      ageGroups: [],
+      income: '',
+      education: '',
+      other: '',
+    },
   });
 
   const updateFormData = (data: Partial<typeof formData>) => {
     setFormData(prev => ({ ...prev, ...data }));
   };
 
-  const totalSteps = 4;
+  const totalSteps = 5; // Increased from 4 to 5
   const progressPercentage = (currentStep / totalSteps) * 100;
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, totalSteps));
@@ -76,6 +85,13 @@ const OnboardingWizard = ({
       )}
 
       {currentStep === 4 && (
+        <DistributionInfoStep
+          formData={formData}
+          updateFormData={updateFormData}
+        />
+      )}
+
+      {currentStep === 5 && (
         <ConfirmationStep
           formData={formData}
         />
