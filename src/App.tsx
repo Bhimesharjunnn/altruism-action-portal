@@ -15,6 +15,12 @@ import CauseDetailsPage from "./pages/CauseDetails";
 import SponsorFormPage from "./pages/SponsorForm";
 import LoginPage from "./pages/Login";
 
+// Public Pages
+import WhySponsorPage from "./pages/WhySponsor";
+import WhyClaimPage from "./pages/WhyClaim";
+import StoriesPage from "./pages/Stories";
+import SubmitStoryPage from "./pages/SubmitStory";
+
 // Claimer Journey Pages
 import ClaimFormPage from "./pages/claimer/ClaimForm";
 import OtpVerificationPage from "./pages/claimer/OtpVerification";
@@ -53,6 +59,12 @@ const App: React.FC = () => {
                 <Route path="/cause/:id" element={<CauseDetailsPage />} />
                 <Route path="/sponsor/new" element={<SponsorFormPage />} />
                 <Route path="/login" element={<LoginPage />} />
+                
+                {/* Public Information Pages */}
+                <Route path="/why-sponsor" element={<WhySponsorPage />} />
+                <Route path="/why-claim" element={<WhyClaimPage />} />
+                <Route path="/stories" element={<StoriesPage />} />
+                <Route path="/stories/submit" element={<SubmitStoryPage />} />
                 
                 {/* Claimer Journey Routes */}
                 <Route path="/claim/:id" element={<ClaimFormPage />} />
