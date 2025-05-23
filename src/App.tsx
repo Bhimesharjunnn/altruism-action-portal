@@ -38,6 +38,12 @@ import AdminDashboard from "./pages/dashboard/AdminDashboard";
 
 // Admin Pages
 import CausesManagement from "./pages/admin/CausesManagement";
+import CampaignApprovals from "./pages/admin/CampaignApprovals";
+import LogoReview from "./pages/admin/LogoReview";
+import ClaimsManagement from "./pages/admin/ClaimsManagement";
+import Shipping from "./pages/admin/Shipping";
+import Analytics from "./pages/admin/Analytics";
+import Settings from "./pages/admin/Settings";
 import QrScanner from "./pages/admin/QrScanner";
 
 // Create QueryClient once, outside of component
@@ -86,6 +92,12 @@ const App: React.FC = () => {
                 
                 {/* Admin Routes */}
                 <Route path="/admin/causes" element={<CausesManagement />} />
+                <Route path="/admin/approvals" element={<CampaignApprovals />} />
+                <Route path="/admin/logos" element={<LogoReview />} />
+                <Route path="/admin/claims" element={<ClaimsManagement />} />
+                <Route path="/admin/shipping" element={<Shipping />} />
+                <Route path="/admin/analytics" element={<Analytics />} />
+                <Route path="/admin/settings" element={<Settings />} />
                 <Route path="/admin/qr-scanner" element={<QrScanner />} />
                 
                 {/* Catch-all Route */}
