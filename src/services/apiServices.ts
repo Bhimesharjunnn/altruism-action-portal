@@ -1,5 +1,6 @@
 
 import { Story } from '@/models/Story';
+import { Cause } from '@/types';
 
 // Mock data for development - would be replaced with real API calls
 const mockStats = {
@@ -40,6 +41,39 @@ const mockStories: Story[] = [
   }
 ];
 
+// Mock causes data
+const mockCauses: Cause[] = [
+  {
+    _id: '1',
+    title: 'Ocean Cleanup Initiative',
+    description: 'Help us remove plastic waste from our oceans with reusable tote bags',
+    story: 'Every year, millions of tons of plastic waste enter our oceans, harming marine life and ecosystems. Our Ocean Cleanup Initiative aims to reduce plastic waste by providing high-quality, reusable tote bags to communities worldwide. Each bag prevents approximately 500 plastic bags from entering the waste stream over its lifetime.',
+    imageUrl: 'https://images.unsplash.com/photo-1583212292454-1fe6229603b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    category: 'droplet',
+    goal: 10000,
+    raised: 7500,
+    status: 'open',
+    sponsors: [
+      {
+        _id: 'sponsor1',
+        userId: 'user1',
+        name: 'EcoTech Solutions',
+        amount: 2500,
+        createdAt: new Date('2025-04-01')
+      },
+      {
+        _id: 'sponsor2',
+        userId: 'user2',
+        name: 'Green Future Corp',
+        amount: 5000,
+        createdAt: new Date('2025-04-15')
+      }
+    ],
+    createdAt: new Date('2025-03-15'),
+    updatedAt: new Date('2025-05-20')
+  }
+];
+
 // In a real app, these would make actual API calls
 export const fetchStats = async () => {
   // In a real app: const response = await fetch('/api/stats');
@@ -51,6 +85,18 @@ export const fetchStories = async (): Promise<Story[]> => {
   // In a real app: const response = await fetch('/api/stories');
   // return response.json();
   return mockStories;
+};
+
+export const fetchCause = async (id: string): Promise<Cause> => {
+  // In a real app: const response = await fetch(`/api/causes/${id}`);
+  // return response.json();
+  
+  // For now, return mock data
+  const cause = mockCauses.find(c => c._id === id);
+  if (!cause) {
+    throw new Error('Cause not found');
+  }
+  return cause;
 };
 
 export const submitStory = async (storyData: Omit<Story, 'id' | 'excerpt' | 'createdAt'>): Promise<Story> => {

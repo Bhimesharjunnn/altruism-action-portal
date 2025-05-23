@@ -35,7 +35,7 @@ const Icons: Record<string, () => JSX.Element> = {
 };
 
 const CauseDetails = () => {
-  const { id } = useParams<CauseDetailsParams>();
+  const { id } = useParams<{ id: string }>();
 
   const { data: cause, isLoading, isError } = useQuery({
     queryKey: ['cause', id],
