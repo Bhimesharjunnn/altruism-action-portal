@@ -36,10 +36,10 @@ const Layout = ({ children }: LayoutProps) => {
           <nav className="hidden md:flex space-x-6">
             <Link to="/" className={`${isActive('/')} px-2 py-4`}>Home</Link>
             <Link to="/causes" className={`${isActive('/causes')} px-2 py-4`}>Causes</Link>
+            <Link to="/create-cause" className={`${isActive('/create-cause')} px-2 py-4`}>Create a Cause</Link>
             <Link to="/sponsor/new" className={`${isActive('/sponsor/new')} px-2 py-4`}>Sponsor</Link>
             <Link to="/why-sponsor" className={`${isActive('/why-sponsor')} px-2 py-4`}>Why Sponsor?</Link>
             <Link to="/why-claim" className={`${isActive('/why-claim')} px-2 py-4`}>Why Claim?</Link>
-            <Link to="/stories" className={`${isActive('/stories')} px-2 py-4`}>Stories</Link>
           </nav>
 
           <div className="flex items-center space-x-4">
@@ -91,10 +91,10 @@ const Layout = ({ children }: LayoutProps) => {
               <ul className="space-y-2">
                 <li><Link to="/" className="text-gray-600 hover:text-primary-600">Home</Link></li>
                 <li><Link to="/causes" className="text-gray-600 hover:text-primary-600">Browse Causes</Link></li>
+                <li><Link to="/create-cause" className="text-gray-600 hover:text-primary-600">Create a Cause</Link></li>
                 <li><Link to="/sponsor/new" className="text-gray-600 hover:text-primary-600">Become a Sponsor</Link></li>
                 <li><Link to="/why-sponsor" className="text-gray-600 hover:text-primary-600">Why Sponsor?</Link></li>
                 <li><Link to="/why-claim" className="text-gray-600 hover:text-primary-600">Why Claim?</Link></li>
-                <li><Link to="/stories" className="text-gray-600 hover:text-primary-600">Stories</Link></li>
               </ul>
             </div>
             <div>

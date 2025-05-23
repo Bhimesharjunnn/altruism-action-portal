@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -14,12 +13,11 @@ import CausesPage from "./pages/Causes";
 import CauseDetailsPage from "./pages/CauseDetails";
 import SponsorFormPage from "./pages/SponsorForm";
 import LoginPage from "./pages/Login";
+import CreateCausePage from "./pages/CreateCause";
 
 // Public Pages
 import WhySponsorPage from "./pages/WhySponsor";
 import WhyClaimPage from "./pages/WhyClaim";
-import StoriesPage from "./pages/Stories";
-import SubmitStoryPage from "./pages/SubmitStory";
 
 // Claimer Journey Pages
 import ClaimFormPage from "./pages/claimer/ClaimForm";
@@ -63,14 +61,13 @@ const App: React.FC = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/causes" element={<CausesPage />} />
                 <Route path="/cause/:id" element={<CauseDetailsPage />} />
+                <Route path="/create-cause" element={<CreateCausePage />} />
                 <Route path="/sponsor/new" element={<SponsorFormPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 
                 {/* Public Information Pages */}
                 <Route path="/why-sponsor" element={<WhySponsorPage />} />
                 <Route path="/why-claim" element={<WhyClaimPage />} />
-                <Route path="/stories" element={<StoriesPage />} />
-                <Route path="/stories/submit" element={<SubmitStoryPage />} />
                 
                 {/* Claimer Journey Routes */}
                 <Route path="/claim/:id" element={<ClaimFormPage />} />
