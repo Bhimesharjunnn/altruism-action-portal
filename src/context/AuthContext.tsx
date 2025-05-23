@@ -27,15 +27,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (email: string, otp: string) => {
-    // This would normally verify with a backend
-    // For now, we'll simulate a successful login
     try {
-      // Mock response
+      // Determine role based on email for demo purposes
+      let role: UserRole = 'claimer';
+      if (email.includes('admin')) {
+        role = 'admin';
+      } else if (email.includes('sponsor')) {
+        role = 'sponsor';
+      }
+
       const mockUser: User = {
         _id: '123',
         email,
         name: 'Test User',
-        role: 'visitor',
+        role,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -50,9 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const register = async (email: string, name: string, role: UserRole) => {
-    // This would normally create an account with a backend
     try {
-      // Mock response
       const mockUser: User = {
         _id: '123',
         email,
@@ -72,8 +75,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const requestOtp = async (email: string) => {
-    // This would normally send an OTP via backend
-    // For demo, just return success
     return true;
   };
 

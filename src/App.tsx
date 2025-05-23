@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 
 // Pages
@@ -80,6 +80,9 @@ const App: React.FC = () => {
                 <Route path="/dashboard/sponsor" element={<SponsorDashboard />} />
                 <Route path="/dashboard/claimer" element={<ClaimerDashboard />} />
                 <Route path="/dashboard/admin" element={<AdminDashboard />} />
+                
+                {/* Redirect old visitor dashboard to appropriate dashboard */}
+                <Route path="/dashboard/visitor" element={<Navigate to="/dashboard/claimer" replace />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin/causes" element={<CausesManagement />} />
