@@ -18,6 +18,20 @@ const fadeIn = {
 };
 
 const ImpactGrid = ({ items, Icons }: ImpactGridProps) => {
+  const renderIcon = (iconName: string) => {
+    const IconComponent = Icons[iconName];
+    
+    if (IconComponent) {
+      return <IconComponent />;
+    }
+    
+    return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    );
+  };
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -55,11 +69,7 @@ const ImpactGrid = ({ items, Icons }: ImpactGridProps) => {
               }}
             >
               <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 mb-4">
-                {Icons[item.icon] ? <Icons[item.icon] /> : 
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                }
+                {renderIcon(item.icon)}
               </div>
               <p className="text-center font-medium">{item.caption}</p>
             </motion.div>
