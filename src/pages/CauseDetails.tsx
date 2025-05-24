@@ -58,6 +58,7 @@ const CauseDetailsPage = () => {
             <Card>
               <CardContent className="p-6">
                 <CauseImageAndStory 
+                  title={cause.title}
                   story={cause.story}
                   imageUrl={cause.imageUrl}
                 />
