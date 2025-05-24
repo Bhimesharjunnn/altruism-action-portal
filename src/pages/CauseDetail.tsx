@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -123,7 +122,6 @@ const CauseDetail = () => {
   return (
     <Layout>
       <div className="min-h-screen">
-        {/* SEO Meta Tags would be handled by Helmet or Next.js Head */}
         
         <HeroSection
           title={cause.title}
@@ -134,6 +132,7 @@ const CauseDetail = () => {
           isSharing={isSharing}
         />
 
+        
         <OverviewCards cause={cause} />
         
         <BriefStory story={briefStory} />

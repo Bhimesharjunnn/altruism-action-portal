@@ -7,8 +7,8 @@ interface HeroSectionProps {
   title: string;
   tagline: string;
   heroImageUrl: string;
-  handleAction: () => void;
-  handleShare: () => void;
+  onDonate: () => void;
+  onShare: () => void;
   isSharing: boolean;
 }
 
@@ -16,8 +16,8 @@ const HeroSection = ({
   title, 
   tagline, 
   heroImageUrl, 
-  handleAction, 
-  handleShare, 
+  onDonate, 
+  onShare, 
   isSharing 
 }: HeroSectionProps) => {
   return (
@@ -54,16 +54,16 @@ const HeroSection = ({
         >
           <Button 
             size="lg" 
-            onClick={handleAction}
+            onClick={onDonate}
             className="px-8 py-6 text-lg"
           >
-            Support {title}
+            Donate to {title}
           </Button>
           <Button 
             variant="outline" 
             size="lg"
             className="px-8 py-6 text-lg border-white text-white hover:bg-white hover:text-black"
-            onClick={handleShare}
+            onClick={onShare}
           >
             {isSharing ? "Link Copied!" : "Share Mission"}
           </Button>
