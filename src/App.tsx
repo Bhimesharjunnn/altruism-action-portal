@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -11,6 +12,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import CausesPage from "./pages/Causes";
 import CauseDetailsPage from "./pages/CauseDetails";
+import CauseDetail from "./pages/CauseDetail";
 import SponsorFormPage from "./pages/SponsorForm";
 import LoginPage from "./pages/Login";
 import CreateCausePage from "./pages/CreateCause";
@@ -60,7 +62,7 @@ const App: React.FC = () => {
                 {/* Public Routes */}
                 <Route path="/" element={<Index />} />
                 <Route path="/causes" element={<CausesPage />} />
-                <Route path="/cause/:id" element={<CauseDetailsPage />} />
+                <Route path="/cause/:id" element={<CauseDetail />} />
                 <Route path="/create-cause" element={<CreateCausePage />} />
                 <Route path="/sponsor/new" element={<SponsorFormPage />} />
                 <Route path="/login" element={<LoginPage />} />
