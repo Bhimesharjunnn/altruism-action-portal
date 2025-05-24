@@ -1,20 +1,19 @@
+
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCause } from '@/services/apiServices';
-import Layout from '@/components/Layout';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Separator } from "@/components/ui/separator"
+import { Card, CardContent } from '@/components/ui/card';
+import HeroSection from '@/components/cause-details/HeroSection';
 import CauseDetailsBreadcrumb from '@/components/cause-details/CauseDetailsBreadcrumb';
 import CauseDetailsHeader from '@/components/cause-details/CauseDetailsHeader';
 import CauseImageAndStory from '@/components/cause-details/CauseImageAndStory';
 import CauseDetailsSidebar from '@/components/cause-details/CauseDetailsSidebar';
 
-const CauseDetails = () => {
+const CauseDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-
-  const { data: cause, isLoading, isError } = useQuery({
+  
+  const { data: cause, isLoading, error } = useQuery({
     queryKey: ['cause', id],
     queryFn: () => fetchCause(id!),
     enabled: !!id,
@@ -22,84 +21,68 @@ const CauseDetails = () => {
 
   if (isLoading) {
     return (
-      <Layout>
-        <main className="container mx-auto py-16 px-4">
-          <section className="space-y-4">
-            <Skeleton className="h-10 w-3/4" />
-            <Skeleton className="h-6 w-1/2" />
-          </section>
-          <Separator className="my-6" />
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="md:col-span-1">
-              <Skeleton className="h-64 w-full" />
-              <div className="mt-4 space-y-2">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-5/6" />
-                <Skeleton className="h-4 w-3/4" />
-              </div>
-            </div>
-            <div className="md:col-span-1 space-y-4">
-              <Card>
-                <CardContent className="space-y-3">
-                  <Skeleton className="h-8 w-1/2" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-full" />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="space-y-3">
-                  <Skeleton className="h-8 w-1/2" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-full" />
-                </CardContent>
-              </Card>
-            </div>
-          </section>
-        </main>
-      </Layout>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading cause details...</div>
+      </div>
     );
   }
 
-  if (isError || !cause) {
+  if (error || !cause) {
     return (
-      <Layout>
-        <main className="container mx-auto py-16 px-4">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Error</h1>
-            <p>Failed to load cause details.</p>
-            <Link to="/causes" className="text-blue-500">Go back to causes</Link>
-          </div>
-        </main>
-      </Layout>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg text-red-600">
+          {error ? 'Error loading cause details' : 'Cause not found'}
+        </div>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <main className="container mx-auto py-16 px-4">
+    <div className="min-h-screen bg-gray-50">
+      <HeroSection 
+        title={cause.title}
+        imageUrl={cause.imageUrl}
+        id={cause._id || ''}
+      />
+      
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <CauseDetailsBreadcrumb causeTitle={cause.title} />
         
-        <CauseDetailsHeader 
-          title={cause.title} 
-          description={cause.description} 
-        />
-
-        <Separator className="my-6" />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <CauseImageAndStory
-            imageUrl={cause.imageUrl}
-            title={cause.title}
-            story={cause.story}
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <CauseDetailsHeader 
+              title={cause.title}
+              description={cause.description}
+            />
+            
+            <Card>
+              <CardContent className="p-6">
+                <CauseImageAndStory 
+                  story={cause.story}
+                  imageUrl={cause.imageUrl}
+                />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-4">Detailed Description</h3>
+                <p className="text-gray-600 leading-relaxed">{cause.story}</p>
+              </CardContent>
+            </Card>
+          </div>
           
-          <CauseDetailsSidebar cause={cause} />
+          <div className="lg:col-span-1">
+            <CauseDetailsSidebar 
+              goal={cause.goal}
+              raised={cause.raised}
+              sponsors={cause.sponsors}
+              status={cause.status}
+            />
+          </div>
         </div>
-      </main>
-    </Layout>
+      </div>
+    </div>
   );
 };
 
-export default CauseDetails;
+export default CauseDetailsPage;

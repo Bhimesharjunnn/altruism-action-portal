@@ -11,60 +11,27 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login, register, requestOtp } = useAuth();
+  const { login, register } = useAuth();
   const { toast } = useToast();
   
   // Login state
   const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
   // Register state
   const [regEmail, setRegEmail] = useState('');
+  const [regPassword, setRegPassword] = useState('');
   const [name, setName] = useState('');
   const [role, setRole] = useState('sponsor');
-  const [regOtpSent, setRegOtpSent] = useState(false);
-  const [regOtp, setRegOtp] = useState('');
   const [isRegLoading, setIsRegLoading] = useState(false);
-
-  const handleSendOtp = async () => {
-    if (!email) {
-      toast({
-        title: "Email Required",
-        description: "Please enter your email address",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    setIsLoading(true);
-    try {
-      const success = await requestOtp(email);
-      if (success) {
-        setOtpSent(true);
-        toast({
-          title: "OTP Sent",
-          description: "Check your email for the verification code",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to send OTP. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      const success = await login(email, otp);
+      const success = await login(email, password);
       if (success) {
         toast({
           title: "Login Successful",
@@ -74,7 +41,7 @@ const LoginPage = () => {
       } else {
         toast({
           title: "Login Failed",
-          description: "Invalid OTP. Please try again.",
+          description: "Invalid email or password. Please try again.",
           variant: "destructive"
         });
       }
@@ -89,43 +56,12 @@ const LoginPage = () => {
     }
   };
 
-  const handleSendRegOtp = async () => {
-    if (!regEmail || !name) {
-      toast({
-        title: "Required Fields Missing",
-        description: "Please enter your email and name",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    setIsRegLoading(true);
-    try {
-      const success = await requestOtp(regEmail);
-      if (success) {
-        setRegOtpSent(true);
-        toast({
-          title: "OTP Sent",
-          description: "Check your email for the verification code",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to send OTP. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsRegLoading(false);
-    }
-  };
-
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsRegLoading(true);
     
     try {
-      const success = await register(regEmail, name, role as any);
+      const success = await register(regEmail, name, regPassword, role as any);
       if (success) {
         toast({
           title: "Registration Successful",
@@ -135,7 +71,7 @@ const LoginPage = () => {
       } else {
         toast({
           title: "Registration Failed",
-          description: "Invalid OTP. Please try again.",
+          description: "Please check your information and try again.",
           variant: "destructive"
         });
       }
@@ -179,49 +115,28 @@ const LoginPage = () => {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="your@email.com"
                       required
-                      disabled={otpSent}
                     />
                   </div>
                   
-                  {otpSent && (
-                    <div className="space-y-2">
-                      <Label htmlFor="otp">Verification Code</Label>
-                      <Input
-                        id="otp"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
-                        placeholder="Enter the code sent to your email"
-                        required
-                      />
-                      <p className="text-sm text-gray-500">
-                        Enter the verification code sent to your email
-                      </p>
-                    </div>
-                  )}
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password"
+                      required
+                    />
+                  </div>
                   
                   <Button
-                    type={otpSent ? "submit" : "button"}
-                    onClick={otpSent ? undefined : handleSendOtp}
+                    type="submit"
                     disabled={isLoading}
                     className="w-full"
                   >
-                    {isLoading ? "Processing..." : otpSent ? "Login" : "Send Verification Code"}
+                    {isLoading ? "Logging in..." : "Login"}
                   </Button>
-                  
-                  {otpSent && (
-                    <div className="text-center">
-                      <Button
-                        type="button"
-                        variant="link"
-                        onClick={() => {
-                          setOtpSent(false);
-                          setOtp('');
-                        }}
-                      >
-                        Use a different email
-                      </Button>
-                    </div>
-                  )}
                 </form>
               </CardContent>
             </TabsContent>
@@ -229,105 +144,75 @@ const LoginPage = () => {
             <TabsContent value="register">
               <CardContent className="p-6">
                 <form onSubmit={handleRegister} className="space-y-4">
-                  {!regOtpSent ? (
-                    <>
-                      <div className="space-y-2">
-                        <Label htmlFor="regEmail">Email</Label>
-                        <Input
-                          id="regEmail"
-                          type="email"
-                          value={regEmail}
-                          onChange={(e) => setRegEmail(e.target.value)}
-                          placeholder="your@email.com"
-                          required
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Full Name</Label>
-                        <Input
-                          id="name"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          placeholder="Your Name"
-                          required
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="role">I want to join as a:</Label>
-                        <div className="grid grid-cols-2 gap-2">
-                          <Button
-                            type="button"
-                            variant={role === 'sponsor' ? "default" : "outline"}
-                            onClick={() => setRole('sponsor')}
-                            className="w-full"
-                          >
-                            Sponsor
-                          </Button>
-                          <Button
-                            type="button"
-                            variant={role === 'claimer' ? "default" : "outline"}
-                            onClick={() => setRole('claimer')}
-                            className="w-full"
-                          >
-                            Claimer
-                          </Button>
-                        </div>
-                        <p className="text-sm text-gray-500 mt-2">
-                          {role === 'sponsor' 
-                            ? "As a sponsor, you can support causes with financial contributions." 
-                            : "As a claimer, you can request sponsorship for your causes."}
-                        </p>
-                      </div>
-                      
+                  <div className="space-y-2">
+                    <Label htmlFor="regEmail">Email</Label>
+                    <Input
+                      id="regEmail"
+                      type="email"
+                      value={regEmail}
+                      onChange={(e) => setRegEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input
+                      id="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your Name"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="regPassword">Password</Label>
+                    <Input
+                      id="regPassword"
+                      type="password"
+                      value={regPassword}
+                      onChange={(e) => setRegPassword(e.target.value)}
+                      placeholder="Create a password"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="role">I want to join as a:</Label>
+                    <div className="grid grid-cols-2 gap-2">
                       <Button
                         type="button"
-                        onClick={handleSendRegOtp}
-                        disabled={isRegLoading}
+                        variant={role === 'sponsor' ? "default" : "outline"}
+                        onClick={() => setRole('sponsor')}
                         className="w-full"
                       >
-                        {isRegLoading ? "Processing..." : "Continue"}
+                        Sponsor
                       </Button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="space-y-2">
-                        <Label htmlFor="regOtp">Verification Code</Label>
-                        <Input
-                          id="regOtp"
-                          value={regOtp}
-                          onChange={(e) => setRegOtp(e.target.value)}
-                          placeholder="Enter the code sent to your email"
-                          required
-                        />
-                        <p className="text-sm text-gray-500">
-                          Enter the verification code sent to {regEmail}
-                        </p>
-                      </div>
-                      
                       <Button
-                        type="submit"
-                        disabled={isRegLoading}
+                        type="button"
+                        variant={role === 'claimer' ? "default" : "outline"}
+                        onClick={() => setRole('claimer')}
                         className="w-full"
                       >
-                        {isRegLoading ? "Processing..." : "Create Account"}
+                        Claimer
                       </Button>
-                      
-                      <div className="text-center">
-                        <Button
-                          type="button"
-                          variant="link"
-                          onClick={() => {
-                            setRegOtpSent(false);
-                            setRegOtp('');
-                          }}
-                        >
-                          Go back
-                        </Button>
-                      </div>
-                    </>
-                  )}
+                    </div>
+                    <p className="text-sm text-gray-500 mt-2">
+                      {role === 'sponsor' 
+                        ? "As a sponsor, you can support causes with financial contributions." 
+                        : "As a claimer, you can request sponsorship for your causes."}
+                    </p>
+                  </div>
+                  
+                  <Button
+                    type="submit"
+                    disabled={isRegLoading}
+                    className="w-full"
+                  >
+                    {isRegLoading ? "Creating Account..." : "Create Account"}
+                  </Button>
                 </form>
               </CardContent>
             </TabsContent>

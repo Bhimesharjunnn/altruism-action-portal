@@ -5,9 +5,8 @@ import { User, UserRole } from '@/types';
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, otp: string) => Promise<boolean>;
-  register: (email: string, name: string, role: UserRole) => Promise<boolean>;
-  requestOtp: (email: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
+  register: (email: string, name: string, password: string, role: UserRole) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -26,8 +25,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, otp: string) => {
+  const login = async (email: string, password: string) => {
     try {
+      // Simple validation for demo purposes
+      if (!email || !password) {
+        return false;
+      }
+
       // Determine role based on email for demo purposes
       let role: UserRole = 'claimer';
       if (email.includes('admin')) {
@@ -54,8 +58,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (email: string, name: string, role: UserRole) => {
+  const register = async (email: string, name: string, password: string, role: UserRole) => {
     try {
+      // Simple validation for demo purposes
+      if (!email || !name || !password) {
+        return false;
+      }
+
       const mockUser: User = {
         _id: '123',
         email,
@@ -74,17 +83,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const requestOtp = async (email: string) => {
-    return true;
-  };
-
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, requestOtp, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
