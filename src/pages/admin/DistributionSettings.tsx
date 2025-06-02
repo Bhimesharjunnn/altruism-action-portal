@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -47,6 +46,11 @@ const DistributionSettings = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('countries');
+  
+  // Filter states
+  const [selectedCountryId, setSelectedCountryId] = useState('');
+  const [selectedCityId, setSelectedCityId] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
 
   const { data: settings, isLoading } = useQuery({
     queryKey: ['distribution-settings'],
@@ -103,8 +107,26 @@ const DistributionSettings = () => {
   });
 
   if (isLoading) {
-    return <AdminLayout title="Distribution Settings" loading={true}></AdminLayout>;
+    return (
+      <AdminLayout title="Distribution Settings" subtitle="Manage countries, cities, categories, and distribution points">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Loading...</div>
+        </div>
+      </AdminLayout>
+    );
   }
+
+  // Filter cities by selected country
+  const filteredCities = settings?.cities.filter(city => 
+    selectedCountryId ? city.countryId === selectedCountryId : true
+  ) || [];
+
+  // Filter distribution points by selected city and category
+  const filteredPoints = settings?.points.filter(point => {
+    if (selectedCityId && point.cityId !== selectedCityId) return false;
+    if (selectedCategoryId && point.categoryId !== selectedCategoryId) return false;
+    return true;
+  }) || [];
 
   const CountriesTab = () => (
     <Card>
@@ -147,7 +169,25 @@ const DistributionSettings = () => {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Cities</CardTitle>
-        <AddCityDialog />
+        <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-2">
+            <Label htmlFor="country-filter">Filter by Country:</Label>
+            <Select value={selectedCountryId} onValueChange={setSelectedCountryId}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="All countries" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All countries</SelectItem>
+                {settings?.countries.map((country) => (
+                  <SelectItem key={country._id} value={country._id!}>
+                    {country.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <AddCityDialog />
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
@@ -161,15 +201,15 @@ const DistributionSettings = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {settings?.cities.map((city) => (
+            {filteredCities.map((city) => (
               <TableRow key={city._id}>
                 <TableCell className="font-medium">{city.name}</TableCell>
                 <TableCell>
-                  {settings.countries.find(c => c._id === city.countryId)?.name}
+                  {settings?.countries.find(c => c._id === city.countryId)?.name}
                 </TableCell>
                 <TableCell>{city.state || '-'}</TableCell>
                 <TableCell>
-                  {settings.points.filter(p => p.cityId === city._id).length}
+                  {settings?.points.filter(p => p.cityId === city._id).length}
                 </TableCell>
                 <TableCell>
                   <Badge variant={city.isActive ? 'default' : 'secondary'}>
@@ -211,7 +251,7 @@ const DistributionSettings = () => {
                 </TableCell>
                 <TableCell>{category.defaultToteCount}</TableCell>
                 <TableCell>
-                  {settings.points.filter(p => p.categoryId === category._id).length}
+                  {settings?.points.filter(p => p.categoryId === category._id).length}
                 </TableCell>
                 <TableCell>
                   <Badge variant={category.isActive ? 'default' : 'secondary'}>
@@ -230,7 +270,41 @@ const DistributionSettings = () => {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Distribution Points</CardTitle>
-        <AddDistributionPointDialog />
+        <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-2">
+            <Label htmlFor="city-filter">Filter by City:</Label>
+            <Select value={selectedCityId} onValueChange={setSelectedCityId}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="All cities" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All cities</SelectItem>
+                {settings?.cities.slice(0, 50).map((city) => (
+                  <SelectItem key={city._id} value={city._id!}>
+                    {city.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="category-filter">Filter by Category:</Label>
+            <Select value={selectedCategoryId} onValueChange={setSelectedCategoryId}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="All categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All categories</SelectItem>
+                {settings?.categories.map((category) => (
+                  <SelectItem key={category._id} value={category._id!}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <AddDistributionPointDialog />
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
@@ -245,9 +319,9 @@ const DistributionSettings = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {settings?.points.slice(0, 50).map((point) => {
-              const city = settings.cities.find(c => c._id === point.cityId);
-              const category = settings.categories.find(c => c._id === point.categoryId);
+            {filteredPoints.slice(0, 50).map((point) => {
+              const city = settings?.cities.find(c => c._id === point.cityId);
+              const category = settings?.categories.find(c => c._id === point.categoryId);
               return (
                 <TableRow key={point._id}>
                   <TableCell className="font-medium">{point.name}</TableCell>
@@ -285,9 +359,14 @@ const DistributionSettings = () => {
             })}
           </TableBody>
         </Table>
-        {settings && settings.points.length > 50 && (
+        {filteredPoints.length > 50 && (
           <div className="mt-4 text-center text-gray-500">
-            Showing first 50 of {settings.points.length} distribution points
+            Showing first 50 of {filteredPoints.length} distribution points
+          </div>
+        )}
+        {filteredPoints.length === 0 && (
+          <div className="mt-4 text-center text-gray-500">
+            No distribution points found with current filters
           </div>
         )}
       </CardContent>
