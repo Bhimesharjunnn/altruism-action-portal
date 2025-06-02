@@ -41,6 +41,11 @@ const CauseDetailsPage = () => {
     <div className="min-h-screen bg-gray-50">
       <HeroSection 
         title={cause.title}
+        tagline={cause.description}
+        heroImageUrl={cause.imageUrl}
+        onDonate={() => {}}
+        onShare={() => {}}
+        isSharing={false}
       />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -72,7 +77,6 @@ const CauseDetailsPage = () => {
           
           <div className="lg:col-span-1">
             <CauseDetailsSidebar 
-              sponsors={cause.sponsors}
               status={cause.status}
             />
           </div>

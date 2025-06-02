@@ -27,7 +27,8 @@ import {
   Truck, 
   BarChart2, 
   Settings, 
-  LogOut
+  LogOut,
+  MapPin
 } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -59,6 +60,7 @@ const AdminLayout = ({ children, title, subtitle, loading = false }: AdminLayout
     { icon: Image, label: 'Logo Review', path: '/admin/logos' },
     { icon: Package, label: 'Claims Management', path: '/admin/claims' },
     { icon: Truck, label: 'Shipping', path: '/admin/shipping' },
+    { icon: MapPin, label: 'Distribution Settings', path: '/admin/distribution-settings' },
     { icon: BarChart2, label: 'Analytics', path: '/admin/analytics' },
     { icon: Settings, label: 'Settings', path: '/admin/settings' },
   ];

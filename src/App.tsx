@@ -45,6 +45,7 @@ import Shipping from "./pages/admin/Shipping";
 import Analytics from "./pages/admin/Analytics";
 import Settings from "./pages/admin/Settings";
 import QrScanner from "./pages/admin/QrScanner";
+import DistributionSettings from "./pages/admin/DistributionSettings";
 
 // Create QueryClient once, outside of component
 const queryClient = new QueryClient();
@@ -98,6 +99,7 @@ const App: React.FC = () => {
                 <Route path="/admin/analytics" element={<Analytics />} />
                 <Route path="/admin/settings" element={<Settings />} />
                 <Route path="/admin/qr-scanner" element={<QrScanner />} />
+                <Route path="/admin/distribution-settings" element={<DistributionSettings />} />
                 
                 {/* Catch-all Route */}
                 <Route path="*" element={<NotFound />} />
