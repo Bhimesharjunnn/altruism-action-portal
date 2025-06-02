@@ -41,7 +41,6 @@ const CauseDetailsPage = () => {
     <div className="min-h-screen bg-gray-50">
       <HeroSection 
         title={cause.title}
-        imageUrl={cause.imageUrl}
         id={cause._id || ''}
       />
       
@@ -74,7 +73,6 @@ const CauseDetailsPage = () => {
           
           <div className="lg:col-span-1">
             <CauseDetailsSidebar 
-              goal={cause.goal}
               raised={cause.raised}
               sponsors={cause.sponsors}
               status={cause.status}
