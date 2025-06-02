@@ -41,7 +41,6 @@ const CauseDetailsPage = () => {
     <div className="min-h-screen bg-gray-50">
       <HeroSection 
         title={cause.title}
-        id={cause._id || ''}
       />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -73,7 +72,6 @@ const CauseDetailsPage = () => {
           
           <div className="lg:col-span-1">
             <CauseDetailsSidebar 
-              raised={cause.raised}
               sponsors={cause.sponsors}
               status={cause.status}
             />

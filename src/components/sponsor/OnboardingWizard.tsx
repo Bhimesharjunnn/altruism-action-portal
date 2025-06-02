@@ -29,8 +29,11 @@ const OnboardingWizard = ({
     toteQuantity: 50,
     logoUrl: '',
     message: '',
-    distributionPoints: [],
-    distributionDate: undefined,
+    distributionType: undefined,
+    campaignStartDate: undefined,
+    campaignEndDate: undefined,
+    selectedCities: [],
+    distributionPoints: {},
     demographics: {
       ageGroups: [],
       income: '',
@@ -43,7 +46,7 @@ const OnboardingWizard = ({
     setFormData(prev => ({ ...prev, ...data }));
   };
 
-  const totalSteps = 5; // Increased from 4 to 5
+  const totalSteps = 5;
   const progressPercentage = (currentStep / totalSteps) * 100;
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, totalSteps));
