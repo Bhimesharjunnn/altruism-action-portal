@@ -76,7 +76,7 @@ const CauseDetailsPage = () => {
           </div>
           
           <div className="lg:col-span-1">
-            <CauseDetailsSidebar cause={cause} />
+            <CauseDetailsSidebar />
           </div>
         </div>
       </div>

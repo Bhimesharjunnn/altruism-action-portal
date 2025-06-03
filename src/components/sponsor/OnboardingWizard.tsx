@@ -29,10 +29,13 @@ const OnboardingWizard = ({
     toteQuantity: 50,
     logoUrl: '',
     message: '',
-    distributionPoints: [] as string[],
-    distributionDate: undefined as Date | undefined,
+    distributionType: undefined,
+    campaignStartDate: undefined,
+    campaignEndDate: undefined,
+    selectedCities: [],
+    distributionPoints: [],
     demographics: {
-      ageGroups: [] as string[],
+      ageGroups: [],
       income: '',
       education: '',
       other: '',
@@ -54,7 +57,7 @@ const OnboardingWizard = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div>
       <div className="mb-8">
         <div className="flex justify-between text-sm font-medium mb-2">
           <span>Step {currentStep} of {totalSteps}</span>
@@ -63,41 +66,39 @@ const OnboardingWizard = ({
         <Progress value={progressPercentage} className="h-2" />
       </div>
 
-      <div className="min-h-[500px]">
-        {currentStep === 1 && (
-          <CauseSelectionStep 
-            formData={formData} 
-            updateFormData={updateFormData} 
-          />
-        )}
+      {currentStep === 1 && (
+        <CauseSelectionStep 
+          formData={formData} 
+          updateFormData={updateFormData} 
+        />
+      )}
 
-        {currentStep === 2 && (
-          <ToteQuantityStep
-            formData={formData}
-            updateFormData={updateFormData}
-          />
-        )}
+      {currentStep === 2 && (
+        <ToteQuantityStep
+          formData={formData}
+          updateFormData={updateFormData}
+        />
+      )}
 
-        {currentStep === 3 && (
-          <LogoUploadStep
-            formData={formData}
-            updateFormData={updateFormData}
-          />
-        )}
+      {currentStep === 3 && (
+        <LogoUploadStep
+          formData={formData}
+          updateFormData={updateFormData}
+        />
+      )}
 
-        {currentStep === 4 && (
-          <DistributionInfoStep
-            formData={formData}
-            updateFormData={updateFormData}
-          />
-        )}
+      {currentStep === 4 && (
+        <DistributionInfoStep
+          formData={formData}
+          updateFormData={updateFormData}
+        />
+      )}
 
-        {currentStep === 5 && (
-          <ConfirmationStep
-            formData={formData}
-          />
-        )}
-      </div>
+      {currentStep === 5 && (
+        <ConfirmationStep
+          formData={formData}
+        />
+      )}
 
       <div className="flex justify-between mt-8 pt-4 border-t">
         <Button 
