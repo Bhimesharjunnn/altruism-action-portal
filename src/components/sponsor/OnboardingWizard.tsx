@@ -29,19 +29,8 @@ const OnboardingWizard = ({
     toteQuantity: 50,
     logoUrl: '',
     message: '',
-    distributionType: undefined as 'online' | 'physical' | undefined,
-    campaignStartDate: undefined as Date | undefined,
-    campaignEndDate: undefined as Date | undefined,
-    selectedCities: [] as string[],
-    distributionPoints: {} as {
-      [city: string]: {
-        malls: { name: string; totes: number; selected: boolean }[];
-        parks: { name: string; totes: number; selected: boolean }[];
-        theatres: { name: string; totes: number; selected: boolean }[];
-        metroStations: { name: string; totes: number; selected: boolean }[];
-        schools: { name: string; totes: number; selected: boolean }[];
-      };
-    },
+    distributionPoints: [] as string[],
+    distributionDate: undefined as Date | undefined,
     demographics: {
       ageGroups: [] as string[],
       income: '',
