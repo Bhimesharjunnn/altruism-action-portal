@@ -33,7 +33,7 @@ const OnboardingWizard = ({
     campaignStartDate: undefined,
     campaignEndDate: undefined,
     selectedCities: [],
-    distributionPoints: [],
+    distributionPoints: {},
     demographics: {
       ageGroups: [],
       income: '',
