@@ -17,7 +17,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored session
     try {
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
@@ -32,12 +31,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Simple validation for demo purposes
       if (!email || !password) {
         return false;
       }
 
-      // Determine role based on email for demo purposes
       let role: UserRole = 'claimer';
       if (email.includes('admin')) {
         role = 'admin';
@@ -65,7 +62,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const register = async (email: string, name: string, password: string, role: UserRole): Promise<boolean> => {
     try {
-      // Simple validation for demo purposes
       if (!email || !name || !password) {
         return false;
       }
@@ -93,16 +89,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem('user');
   };
 
-  const contextValue: AuthContextType = {
-    user,
-    isLoading,
-    login,
-    register,
-    logout
-  };
-
   return (
-    <AuthContext.Provider value={contextValue}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
