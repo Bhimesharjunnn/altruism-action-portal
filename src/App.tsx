@@ -52,63 +52,61 @@ const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Index />} />
-                <Route path="/causes" element={<CausesPage />} />
-                <Route path="/cause/:id" element={<CauseDetail />} />
-                <Route path="/create-cause" element={<CreateCausePage />} />
-                <Route path="/sponsor/new" element={<SponsorFormPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                
-                {/* Public Information Pages */}
-                <Route path="/why-sponsor" element={<WhySponsorPage />} />
-                <Route path="/why-claim" element={<WhyClaimPage />} />
-                
-                {/* Claimer Journey Routes */}
-                <Route path="/claim/:id" element={<ClaimFormPage />} />
-                <Route path="/claim/verify" element={<OtpVerificationPage />} />
-                <Route path="/claim/confirmed" element={<ClaimConfirmedPage />} />
-                <Route path="/claim/status/:id" element={<ClaimStatusPage />} />
-                <Route path="/waitlist/:id" element={<JoinWaitlistPage />} />
-                <Route path="/waitlist/confirmed" element={<WaitlistConfirmationPage />} />
-                <Route path="/claim/magic-link" element={<MagicLinkClaimPage />} />
-                <Route path="/demo/waitlist-email" element={<WaitlistEmailPreviewPage />} />
-                
-                {/* Dashboard Routes */}
-                <Route path="/dashboard/sponsor" element={<SponsorDashboard />} />
-                <Route path="/dashboard/claimer" element={<ClaimerDashboard />} />
-                <Route path="/dashboard/admin" element={<AdminDashboard />} />
-                
-                {/* Redirect old visitor dashboard to appropriate dashboard */}
-                <Route path="/dashboard/visitor" element={<Navigate to="/dashboard/claimer" replace />} />
-                
-                {/* Admin Routes */}
-                <Route path="/admin/causes" element={<CausesManagement />} />
-                <Route path="/admin/approvals" element={<CampaignApprovals />} />
-                <Route path="/admin/logos" element={<LogoReview />} />
-                <Route path="/admin/claims" element={<ClaimsManagement />} />
-                <Route path="/admin/shipping" element={<Shipping />} />
-                <Route path="/admin/analytics" element={<Analytics />} />
-                <Route path="/admin/settings" element={<Settings />} />
-                <Route path="/admin/qr-scanner" element={<QrScanner />} />
-                <Route path="/admin/distribution-settings" element={<DistributionSettings />} />
-                
-                {/* Catch-all Route */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/causes" element={<CausesPage />} />
+              <Route path="/cause/:id" element={<CauseDetail />} />
+              <Route path="/create-cause" element={<CreateCausePage />} />
+              <Route path="/sponsor/new" element={<SponsorFormPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              
+              {/* Public Information Pages */}
+              <Route path="/why-sponsor" element={<WhySponsorPage />} />
+              <Route path="/why-claim" element={<WhyClaimPage />} />
+              
+              {/* Claimer Journey Routes */}
+              <Route path="/claim/:id" element={<ClaimFormPage />} />
+              <Route path="/claim/verify" element={<OtpVerificationPage />} />
+              <Route path="/claim/confirmed" element={<ClaimConfirmedPage />} />
+              <Route path="/claim/status/:id" element={<ClaimStatusPage />} />
+              <Route path="/waitlist/:id" element={<JoinWaitlistPage />} />
+              <Route path="/waitlist/confirmed" element={<WaitlistConfirmationPage />} />
+              <Route path="/claim/magic-link" element={<MagicLinkClaimPage />} />
+              <Route path="/demo/waitlist-email" element={<WaitlistEmailPreviewPage />} />
+              
+              {/* Dashboard Routes */}
+              <Route path="/dashboard/sponsor" element={<SponsorDashboard />} />
+              <Route path="/dashboard/claimer" element={<ClaimerDashboard />} />
+              <Route path="/dashboard/admin" element={<AdminDashboard />} />
+              
+              {/* Redirect old visitor dashboard to appropriate dashboard */}
+              <Route path="/dashboard/visitor" element={<Navigate to="/dashboard/claimer" replace />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin/causes" element={<CausesManagement />} />
+              <Route path="/admin/approvals" element={<CampaignApprovals />} />
+              <Route path="/admin/logos" element={<LogoReview />} />
+              <Route path="/admin/claims" element={<ClaimsManagement />} />
+              <Route path="/admin/shipping" element={<Shipping />} />
+              <Route path="/admin/analytics" element={<Analytics />} />
+              <Route path="/admin/settings" element={<Settings />} />
+              <Route path="/admin/qr-scanner" element={<QrScanner />} />
+              <Route path="/admin/distribution-settings" element={<DistributionSettings />} />
+              
+              {/* Catch-all Route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 };
 
