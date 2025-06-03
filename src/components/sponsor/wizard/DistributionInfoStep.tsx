@@ -1,5 +1,4 @@
-
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { format } from "date-fns";
 import { CalendarIcon, Plus, Minus, MapPin, Building, Trees, Train, GraduationCap, Search, X, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -140,7 +139,6 @@ const DistributionInfoStep: React.FC<DistributionInfoStepProps> = ({
     const updatedCities = [...currentCities, city];
     updateFormData({ selectedCities: updatedCities });
     
-    // Initialize distribution points for new city
     const updatedDistributionPoints = {
       ...formData.distributionPoints,
       [city]: {
@@ -372,262 +370,255 @@ const DistributionInfoStep: React.FC<DistributionInfoStepProps> = ({
 
         {/* Physical Distribution Fields */}
         {formData.distributionType === 'physical' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Form */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* City Selection */}
-              <Card>
+          <div className="space-y-6">
+            {/* City Selection */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Select Cities</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Choose the cities where you want to distribute totes
+                </p>
+              </CardHeader>
+              <CardContent>
+                {/* Quick Pick Cities */}
+                <div className="mb-4">
+                  <Label className="text-sm font-medium mb-2 block">Quick Pick Cities</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {quickPickCities.map((city) => (
+                      <Button
+                        key={city}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleCityAdd(city)}
+                        disabled={(formData.selectedCities || []).includes(city)}
+                        className="text-xs"
+                      >
+                        + {city}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Search Input */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Search Cities</Label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      ref={searchInputRef}
+                      type="text"
+                      placeholder="Search for cities..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                    {searchTerm && filteredCities.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                        {filteredCities.slice(0, 8).map((city) => (
+                          <button
+                            key={city}
+                            onClick={() => handleCityAdd(city)}
+                            className="w-full text-left px-3 py-2 hover:bg-gray-100 text-sm"
+                          >
+                            {city}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Selected Cities as Chips */}
+                {formData.selectedCities && formData.selectedCities.length > 0 && (
+                  <div className="mt-4">
+                    <Label className="text-sm font-medium mb-2 block">Selected Cities</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {formData.selectedCities.map((city) => (
+                        <Badge key={city} variant="secondary" className="px-2 py-1">
+                          {city}
+                          <button
+                            onClick={() => handleCityRemove(city)}
+                            className="ml-2 text-gray-500 hover:text-gray-700"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Distribution Points for Selected Cities - Full Width */}
+            {formData.selectedCities && formData.selectedCities.length > 0 && (
+              <Card className="w-full">
                 <CardHeader>
-                  <CardTitle>Select Cities</CardTitle>
+                  <CardTitle>Distribution Points & Tote Allocation</CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    Choose the cities where you want to distribute totes
+                    Select specific locations and customize tote quantities for each city
                   </p>
                 </CardHeader>
                 <CardContent>
-                  {/* Quick Pick Cities */}
-                  <div className="mb-4">
-                    <Label className="text-sm font-medium mb-2 block">Quick Pick Cities</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {quickPickCities.map((city) => (
-                        <Button
-                          key={city}
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleCityAdd(city)}
-                          disabled={(formData.selectedCities || []).includes(city)}
-                          className="text-xs"
-                        >
-                          + {city}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Search Input */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">Search Cities</Label>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        ref={searchInputRef}
-                        type="text"
-                        placeholder="Search for cities..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                      />
-                      {searchTerm && filteredCities.length > 0 && (
-                        <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-48 overflow-y-auto">
-                          {filteredCities.slice(0, 8).map((city) => (
-                            <button
-                              key={city}
-                              onClick={() => handleCityAdd(city)}
-                              className="w-full text-left px-3 py-2 hover:bg-gray-100 text-sm"
-                            >
-                              {city}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Selected Cities as Chips */}
-                  {formData.selectedCities && formData.selectedCities.length > 0 && (
-                    <div className="mt-4">
-                      <Label className="text-sm font-medium mb-2 block">Selected Cities</Label>
-                      <div className="flex flex-wrap gap-2">
-                        {formData.selectedCities.map((city) => (
-                          <Badge key={city} variant="secondary" className="px-2 py-1">
-                            {city}
-                            <button
-                              onClick={() => handleCityRemove(city)}
-                              className="ml-2 text-gray-500 hover:text-gray-700"
-                            >
-                              <X className="h-3 w-3" />
-                            </button>
+                    {formData.selectedCities.map((city) => (
+                      <div key={city} className="border rounded-lg">
+                        {/* City Header */}
+                        <button
+                          onClick={() => handleCityAccordionToggle(city)}
+                          className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg"
+                          aria-expanded={openCity === city}
+                          aria-controls={`city-${city}-content`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <ChevronDown 
+                              className={cn(
+                                "h-4 w-4 transition-transform",
+                                openCity === city && "rotate-180"
+                              )}
+                            />
+                            <span className="font-medium">{city}</span>
+                          </div>
+                          <Badge variant="outline" className="text-xs">
+                            {getTotalSelectedLocations(city)} locations • {getTotalTotes(city)} totes
                           </Badge>
-                        ))}
+                        </button>
+
+                        {/* City Content */}
+                        {openCity === city && (
+                          <div id={`city-${city}-content`} className="px-4 pb-4 space-y-2">
+                            {Object.entries(distributionCategories).map(([categoryKey, category]) => {
+                              const Icon = category.icon;
+                              const cityPoints = formData.distributionPoints?.[city];
+                              const categoryPoints = cityPoints?.[categoryKey as keyof typeof cityPoints] || [];
+                              const selectedCount = categoryPoints.filter(point => point.selected).length;
+                              const isOpen = openCategory?.city === city && openCategory?.category === categoryKey;
+                              
+                              return (
+                                <div key={categoryKey} className="border rounded-lg">
+                                  {/* Category Header */}
+                                  <button
+                                    onClick={() => handleCategoryAccordionToggle(city, categoryKey)}
+                                    className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg"
+                                    aria-expanded={isOpen}
+                                    aria-controls={`category-${city}-${categoryKey}-content`}
+                                  >
+                                    <div className="flex items-center space-x-2">
+                                      <ChevronDown 
+                                        className={cn(
+                                          "h-3 w-3 transition-transform",
+                                          isOpen && "rotate-180"
+                                        )}
+                                      />
+                                      <Icon className={`h-4 w-4 ${category.color}`} />
+                                      <span className="text-sm font-medium">{category.name}</span>
+                                    </div>
+                                    <Badge variant="outline" className="text-xs">
+                                      {selectedCount} selected
+                                    </Badge>
+                                  </button>
+
+                                  {/* Category Content */}
+                                  {isOpen && (
+                                    <div id={`category-${city}-${categoryKey}-content`} className="px-3 pb-3 space-y-2">
+                                      {categoryPoints.map((point, index) => (
+                                        <div key={index} className={cn(
+                                          "flex items-center justify-between p-2 border rounded",
+                                          point.selected ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'
+                                        )}>
+                                          <div className="flex items-center space-x-2">
+                                            <Checkbox 
+                                              id={`${city}-${categoryKey}-${index}`}
+                                              checked={point.selected}
+                                              onCheckedChange={() => handleLocationToggle(city, categoryKey, index)}
+                                            />
+                                            <Label
+                                              htmlFor={`${city}-${categoryKey}-${index}`}
+                                              className="text-xs cursor-pointer"
+                                            >
+                                              {point.name}
+                                            </Label>
+                                          </div>
+                                          {point.selected && (
+                                            <div className="flex items-center space-x-1">
+                                              <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleToteChange(city, categoryKey, index, point.totes - 50)}
+                                                disabled={point.totes <= category.defaultTotes}
+                                                className="h-6 w-6 p-0"
+                                              >
+                                                <Minus className="h-2 w-2" />
+                                              </Button>
+                                              <Input
+                                                type="number"
+                                                value={point.totes}
+                                                onChange={(e) => handleToteChange(city, categoryKey, index, parseInt(e.target.value) || category.defaultTotes)}
+                                                className="w-16 h-6 text-xs text-center p-1"
+                                                min={category.defaultTotes}
+                                              />
+                                              <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleToteChange(city, categoryKey, index, point.totes + 50)}
+                                                className="h-6 w-6 p-0"
+                                              >
+                                                <Plus className="h-2 w-2" />
+                                              </Button>
+                                            </div>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
+            )}
 
-              {/* Distribution Points for Selected Cities */}
-              {formData.selectedCities && formData.selectedCities.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Distribution Points & Tote Allocation</CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      Select specific locations and customize tote quantities for each city
-                    </p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {formData.selectedCities.map((city) => (
-                        <div key={city} className="border rounded-lg">
-                          {/* City Header */}
-                          <button
-                            onClick={() => handleCityAccordionToggle(city)}
-                            className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg"
-                            aria-expanded={openCity === city}
-                            aria-controls={`city-${city}-content`}
-                          >
-                            <div className="flex items-center space-x-3">
-                              <ChevronDown 
-                                className={cn(
-                                  "h-4 w-4 transition-transform",
-                                  openCity === city && "rotate-180"
-                                )}
-                              />
-                              <span className="font-medium">{city}</span>
-                            </div>
-                            <Badge variant="outline" className="text-xs">
-                              {getTotalSelectedLocations(city)} locations • {getTotalTotes(city)} totes
-                            </Badge>
-                          </button>
-
-                          {/* City Content */}
-                          {openCity === city && (
-                            <div id={`city-${city}-content`} className="px-4 pb-4 space-y-2">
-                              {Object.entries(distributionCategories).map(([categoryKey, category]) => {
-                                const Icon = category.icon;
-                                const cityPoints = formData.distributionPoints?.[city];
-                                const categoryPoints = cityPoints?.[categoryKey as keyof typeof cityPoints] || [];
-                                const selectedCount = categoryPoints.filter(point => point.selected).length;
-                                const isOpen = openCategory?.city === city && openCategory?.category === categoryKey;
-                                
-                                return (
-                                  <div key={categoryKey} className="border rounded-lg">
-                                    {/* Category Header */}
-                                    <button
-                                      onClick={() => handleCategoryAccordionToggle(city, categoryKey)}
-                                      className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg"
-                                      aria-expanded={isOpen}
-                                      aria-controls={`category-${city}-${categoryKey}-content`}
-                                    >
-                                      <div className="flex items-center space-x-2">
-                                        <ChevronDown 
-                                          className={cn(
-                                            "h-3 w-3 transition-transform",
-                                            isOpen && "rotate-180"
-                                          )}
-                                        />
-                                        <Icon className={`h-4 w-4 ${category.color}`} />
-                                        <span className="text-sm font-medium">{category.name}</span>
-                                      </div>
-                                      <Badge variant="outline" className="text-xs">
-                                        {selectedCount} selected
-                                      </Badge>
-                                    </button>
-
-                                    {/* Category Content */}
-                                    {isOpen && (
-                                      <div id={`category-${city}-${categoryKey}-content`} className="px-3 pb-3 space-y-2">
-                                        {categoryPoints.map((point, index) => (
-                                          <div key={index} className={cn(
-                                            "flex items-center justify-between p-2 border rounded",
-                                            point.selected ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'
-                                          )}>
-                                            <div className="flex items-center space-x-2">
-                                              <Checkbox 
-                                                id={`${city}-${categoryKey}-${index}`}
-                                                checked={point.selected}
-                                                onCheckedChange={() => handleLocationToggle(city, categoryKey, index)}
-                                              />
-                                              <Label
-                                                htmlFor={`${city}-${categoryKey}-${index}`}
-                                                className="text-xs cursor-pointer"
-                                              >
-                                                {point.name}
-                                              </Label>
-                                            </div>
-                                            {point.selected && (
-                                              <div className="flex items-center space-x-1">
-                                                <Button
-                                                  variant="outline"
-                                                  size="sm"
-                                                  onClick={() => handleToteChange(city, categoryKey, index, point.totes - 50)}
-                                                  disabled={point.totes <= category.defaultTotes}
-                                                  className="h-6 w-6 p-0"
-                                                >
-                                                  <Minus className="h-2 w-2" />
-                                                </Button>
-                                                <Input
-                                                  type="number"
-                                                  value={point.totes}
-                                                  onChange={(e) => handleToteChange(city, categoryKey, index, parseInt(e.target.value) || category.defaultTotes)}
-                                                  className="w-16 h-6 text-xs text-center p-1"
-                                                  min={category.defaultTotes}
-                                                />
-                                                <Button
-                                                  variant="outline"
-                                                  size="sm"
-                                                  onClick={() => handleToteChange(city, categoryKey, index, point.totes + 50)}
-                                                  className="h-6 w-6 p-0"
-                                                >
-                                                  <Plus className="h-2 w-2" />
-                                                </Button>
-                                              </div>
-                                            )}
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-
-            {/* Right Column - Summary Card */}
-            <div className="lg:col-span-1">
-              <Card className="sticky top-4">
+            {/* Summary Card - Full Width on Mobile */}
+            {totalCities > 0 && (
+              <Card className="w-full">
                 <CardHeader>
                   <CardTitle className="text-lg">Distribution Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div className="text-center p-3 bg-blue-50 rounded-lg">
                       <div className="text-2xl font-bold text-blue-600">{totalTotes.toLocaleString()}</div>
                       <div className="text-sm text-gray-600">Total Totes</div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="text-center p-3 bg-green-50 rounded-lg">
-                        <div className="text-lg font-bold text-green-600">{totalCities}</div>
-                        <div className="text-xs text-gray-600">Cities</div>
-                      </div>
-                      <div className="text-center p-3 bg-purple-50 rounded-lg">
-                        <div className="text-lg font-bold text-purple-600">{totalLocations}</div>
-                        <div className="text-xs text-gray-600">Locations</div>
-                      </div>
+                    <div className="text-center p-3 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">{totalCities}</div>
+                      <div className="text-sm text-gray-600">Cities</div>
+                    </div>
+                    <div className="text-center p-3 bg-purple-50 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600">{totalLocations}</div>
+                      <div className="text-sm text-gray-600">Locations</div>
                     </div>
                   </div>
                   
-                  {totalCities > 0 && (
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Selected Cities</Label>
-                      <div className="space-y-1 max-h-32 overflow-y-auto">
-                        {formData.selectedCities?.map((city) => (
-                          <div key={city} className="flex justify-between text-xs p-2 bg-gray-50 rounded">
-                            <span>{city}</span>
-                            <span className="text-gray-500">{getTotalTotes(city)} totes</span>
-                          </div>
-                        ))}
-                      </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Selected Cities</Label>
+                    <div className="space-y-1 max-h-32 overflow-y-auto">
+                      {formData.selectedCities?.map((city) => (
+                        <div key={city} className="flex justify-between text-xs p-2 bg-gray-50 rounded">
+                          <span>{city}</span>
+                          <span className="text-gray-500">{getTotalTotes(city)} totes</span>
+                        </div>
+                      ))}
                     </div>
-                  )}
+                  </div>
                 </CardContent>
               </Card>
-            </div>
+            )}
           </div>
         )}
       </div>
