@@ -1,4 +1,3 @@
-
 export type UserRole = "sponsor" | "claimer" | "admin" | "visitor";
 
 export interface User {
@@ -17,6 +16,7 @@ export interface Cause {
   description: string;
   story: string;
   imageUrl: string;
+  adminImageUrl?: string; // New field for admin-set image
   category: string;
   goal: number;
   raised: number;
@@ -25,6 +25,7 @@ export interface Cause {
   sponsors: Sponsor[];
   createdAt: Date;
   updatedAt: Date;
+  isOnline?: boolean;
 }
 
 export interface Sponsor {

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Eye, EyeOff, PlusCircle, Search, ArrowUpDown, Download } from 'lucide-react';
+import { Eye, EyeOff, PlusCircle, Search, ArrowUpDown, Download, Image as ImageIcon } from 'lucide-react';
 
 // Mock causes data
 const mockCauses = [
@@ -20,7 +20,9 @@ const mockCauses = [
     raised: 4000,
     status: 'open',
     createdAt: new Date('2025-02-15'),
-    isOnline: true
+    isOnline: true,
+    imageUrl: 'https://images.unsplash.com/photo-1583212292454-1fe6229603b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    adminImageUrl: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'
   },
   {
     _id: '2',
@@ -31,7 +33,9 @@ const mockCauses = [
     raised: 3000,
     status: 'sponsored',
     createdAt: new Date('2025-01-25'),
-    isOnline: true
+    isOnline: true,
+    imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    adminImageUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'
   },
   {
     _id: '3',
@@ -42,7 +46,9 @@ const mockCauses = [
     raised: 1500,
     status: 'open',
     createdAt: new Date('2025-03-05'),
-    isOnline: false
+    isOnline: false,
+    imageUrl: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    adminImageUrl: null
   },
   {
     _id: '4',
@@ -53,7 +59,9 @@ const mockCauses = [
     raised: 2500,
     status: 'waitlist',
     createdAt: new Date('2025-03-12'),
-    isOnline: true
+    isOnline: true,
+    imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    adminImageUrl: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80'
   },
   {
     _id: '5',
@@ -64,7 +72,9 @@ const mockCauses = [
     raised: 0,
     status: 'waitlist',
     createdAt: new Date('2025-03-15'),
-    isOnline: false
+    isOnline: false,
+    imageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    adminImageUrl: null
   }
 ];
 
@@ -98,13 +108,21 @@ const CausesManagement = () => {
       description: `All claims for this cause have been closed as it reached the tote limit.`
     });
   };
-  
-  const handleSort = (column: 'date' | 'title' | 'status' | 'raised') => {
-    if (sortBy === column) {
-      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(column);
-      setSortDirection('asc');
+
+  const handleSetAdminImage = (causeId: string) => {
+    const imageUrl = prompt('Enter the admin image URL for this cause:');
+    if (imageUrl) {
+      setCauses(prev => prev.map(cause => {
+        if (cause._id === causeId) {
+          return { ...cause, adminImageUrl: imageUrl };
+        }
+        return cause;
+      }));
+      
+      toast({
+        title: 'Admin Image Updated',
+        description: 'The admin image for this cause has been set successfully.'
+      });
     }
   };
   
@@ -199,6 +217,11 @@ const CausesManagement = () => {
                         Offline
                       </Badge>
                     )}
+                    {cause.adminImageUrl && (
+                      <Badge variant="outline" className="bg-purple-100 text-purple-800">
+                        Admin Image Set
+                      </Badge>
+                    )}
                   </div>
                   <p className="text-gray-600 mb-4">{cause.description}</p>
                   <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -226,6 +249,14 @@ const CausesManagement = () => {
                     className="flex-1"
                   >
                     Edit
+                  </Button>
+                  <Button 
+                    onClick={() => handleSetAdminImage(cause._id)}
+                    variant="outline" 
+                    className="flex-1 flex items-center gap-1"
+                  >
+                    <ImageIcon className="h-4 w-4" />
+                    <span>Set Image</span>
                   </Button>
                   <Button 
                     onClick={() => handleToggleStatus(cause._id)}
