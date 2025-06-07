@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -28,11 +29,11 @@ const OnboardingWizard = ({
     toteQuantity: 50,
     logoUrl: '',
     message: '',
-    distributionType: undefined,
-    campaignStartDate: undefined,
-    campaignEndDate: undefined,
-    selectedCities: [],
-    distributionPoints: {},
+    causeImageUrl: '',
+    finalMockupUrl: '',
+    logoTransform: { x: 0, y: 0, scale: 1 },
+    distributionPoints: [] as string[],
+    distributionDate: undefined as Date | undefined,
     demographics: {
       ageGroups: [],
       income: '',

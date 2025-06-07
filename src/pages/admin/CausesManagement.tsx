@@ -86,6 +86,15 @@ const CausesManagement = () => {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [causes, setCauses] = useState(mockCauses);
   
+  const handleSort = (field: 'date' | 'title' | 'status' | 'raised') => {
+    if (sortBy === field) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(field);
+      setSortDirection('asc');
+    }
+  };
+  
   const handleToggleStatus = (causeId: string) => {
     setCauses(prev => prev.map(cause => {
       if (cause._id === causeId) {
@@ -110,6 +119,18 @@ const CausesManagement = () => {
   };
 
   const handleSetAdminImage = (causeId: string) => {
+    const cause = causes.find(c => c._id === causeId);
+    
+    // Only allow setting admin image for approved/sponsored causes
+    if (cause?.status !== 'sponsored') {
+      toast({
+        title: 'Image Not Allowed',
+        description: 'Admin images can only be set for approved causes.',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
     const imageUrl = prompt('Enter the admin image URL for this cause:');
     if (imageUrl) {
       setCauses(prev => prev.map(cause => {
@@ -254,6 +275,7 @@ const CausesManagement = () => {
                     onClick={() => handleSetAdminImage(cause._id)}
                     variant="outline" 
                     className="flex-1 flex items-center gap-1"
+                    disabled={cause.status !== 'sponsored'}
                   >
                     <ImageIcon className="h-4 w-4" />
                     <span>Set Image</span>
