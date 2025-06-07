@@ -1,13 +1,13 @@
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, AlertCircle, Move, RotateCcw, Info } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card, CardContent } from '@/components/ui/card';
+import { Info } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import LogoUploadSection from './logo-upload/LogoUploadSection';
+import MessageSection from './logo-upload/MessageSection';
+import CausePreviewCanvas from './logo-upload/CausePreviewCanvas';
+import FinalPreviewCanvas from './logo-upload/FinalPreviewCanvas';
 
 interface LogoUploadStepProps {
   formData: {
@@ -52,30 +52,13 @@ const LogoUploadStep = ({ formData, updateFormData }: LogoUploadStepProps) => {
   const [logoPreview, setLogoPreview] = useState<string>(formData.logoUrl);
   const [uploading, setUploading] = useState(false);
   const [logoTransform, setLogoTransform] = useState(formData.logoTransform || { x: 50, y: 50, scale: 0.3 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [causeData, setCauseData] = useState<any>(null);
-  
-  const causeCanvasRef = useRef<HTMLCanvasElement>(null);
-  const finalCanvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     // Fetch cause data on mount
     const data = mockCauseData[formData.selectedCause as keyof typeof mockCauseData];
     setCauseData(data);
   }, [formData.selectedCause]);
-
-  useEffect(() => {
-    if (causeData?.imageReady && causeData?.adminImageUrl && causeCanvasRef.current) {
-      renderCauseCanvas();
-    }
-  }, [causeData]);
-
-  useEffect(() => {
-    if (causeData?.imageReady && causeData?.adminImageUrl && logoPreview && finalCanvasRef.current) {
-      renderFinalCanvas();
-    }
-  }, [causeData, logoPreview, logoTransform]);
 
   const validateImageFile = (file: File): Promise<boolean> => {
     return new Promise((resolve) => {
@@ -119,186 +102,8 @@ const LogoUploadStep = ({ formData, updateFormData }: LogoUploadStepProps) => {
     });
   };
 
-  const renderCauseCanvas = () => {
-    const canvas = causeCanvasRef.current;
-    if (!canvas || !causeData?.adminImageUrl) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const toteBag = new Image();
-    toteBag.crossOrigin = 'anonymous';
-    toteBag.onload = () => {
-      // Clear canvas
-      ctx.clearRect(0, 0, 400, 400);
-      
-      // Draw tote bag template
-      ctx.drawImage(toteBag, 0, 0, 400, 400);
-      
-      // Draw admin cause image
-      const causeImg = new Image();
-      causeImg.crossOrigin = 'anonymous';
-      causeImg.onload = () => {
-        // Define placeholder rectangle (adjust based on template)
-        const placeholderX = 100;
-        const placeholderY = 150;
-        const placeholderWidth = 200;
-        const placeholderHeight = 150;
-        
-        // Calculate aspect ratio and fit image
-        const imgAspect = causeImg.width / causeImg.height;
-        const placeholderAspect = placeholderWidth / placeholderHeight;
-        
-        let drawWidth, drawHeight, drawX, drawY;
-        
-        if (imgAspect > placeholderAspect) {
-          drawHeight = placeholderHeight;
-          drawWidth = drawHeight * imgAspect;
-          drawX = placeholderX - (drawWidth - placeholderWidth) / 2;
-          drawY = placeholderY;
-        } else {
-          drawWidth = placeholderWidth;
-          drawHeight = drawWidth / imgAspect;
-          drawX = placeholderX;
-          drawY = placeholderY - (drawHeight - placeholderHeight) / 2;
-        }
-        
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(placeholderX, placeholderY, placeholderWidth, placeholderHeight);
-        ctx.clip();
-        ctx.drawImage(causeImg, drawX, drawY, drawWidth, drawHeight);
-        ctx.restore();
-      };
-      causeImg.src = causeData.adminImageUrl;
-    };
-    toteBag.src = causeData.totebagTemplateUrl;
-  };
-
-  const renderFinalCanvas = () => {
-    const canvas = finalCanvasRef.current;
-    if (!canvas || !causeData?.adminImageUrl || !logoPreview) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const toteBag = new Image();
-    toteBag.crossOrigin = 'anonymous';
-    toteBag.onload = () => {
-      // Clear canvas
-      ctx.clearRect(0, 0, 400, 400);
-      
-      // Draw tote bag template
-      ctx.drawImage(toteBag, 0, 0, 400, 400);
-      
-      // Draw cause image
-      const causeImg = new Image();
-      causeImg.crossOrigin = 'anonymous';
-      causeImg.onload = () => {
-        const placeholderX = 100;
-        const placeholderY = 150;
-        const placeholderWidth = 200;
-        const placeholderHeight = 150;
-        
-        const imgAspect = causeImg.width / causeImg.height;
-        const placeholderAspect = placeholderWidth / placeholderHeight;
-        
-        let drawWidth, drawHeight, drawX, drawY;
-        
-        if (imgAspect > placeholderAspect) {
-          drawHeight = placeholderHeight;
-          drawWidth = drawHeight * imgAspect;
-          drawX = placeholderX - (drawWidth - placeholderWidth) / 2;
-          drawY = placeholderY;
-        } else {
-          drawWidth = placeholderWidth;
-          drawHeight = drawWidth / imgAspect;
-          drawX = placeholderX;
-          drawY = placeholderY - (drawHeight - placeholderHeight) / 2;
-        }
-        
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(placeholderX, placeholderY, placeholderWidth, placeholderHeight);
-        ctx.clip();
-        ctx.drawImage(causeImg, drawX, drawY, drawWidth, drawHeight);
-        ctx.restore();
-        
-        // Draw logo
-        const logoImg = new Image();
-        logoImg.crossOrigin = 'anonymous';
-        logoImg.onload = () => {
-          const logoWidth = 400 * logoTransform.scale;
-          const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
-          const logoX = (logoTransform.x / 100) * 400 - logoWidth / 2;
-          const logoY = (logoTransform.y / 100) * 400 - logoHeight / 2;
-          
-          ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
-          
-          // Export final mockup
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const url = URL.createObjectURL(blob);
-              updateFormData({ finalMockupUrl: url, logoTransform });
-            }
-          });
-        };
-        logoImg.src = logoPreview;
-      };
-      causeImg.src = causeData.adminImageUrl;
-    };
-    toteBag.src = causeData.totebagTemplateUrl;
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!logoPreview) return;
-    setIsDragging(true);
-    setDragStart({ x: e.clientX, y: e.clientY });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    
-    const deltaX = e.clientX - dragStart.x;
-    const deltaY = e.clientY - dragStart.y;
-    
-    setLogoTransform(prev => ({
-      ...prev,
-      x: Math.max(0, Math.min(100, prev.x + (deltaX / 4))),
-      y: Math.max(0, Math.min(100, prev.y + (deltaY / 4)))
-    }));
-    
-    setDragStart({ x: e.clientX, y: e.clientY });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!logoPreview) return;
-    
-    switch (e.key) {
-      case 'ArrowLeft':
-        setLogoTransform(prev => ({ ...prev, x: Math.max(0, prev.x - 1) }));
-        break;
-      case 'ArrowRight':
-        setLogoTransform(prev => ({ ...prev, x: Math.min(100, prev.x + 1) }));
-        break;
-      case 'ArrowUp':
-        setLogoTransform(prev => ({ ...prev, y: Math.max(0, prev.y - 1) }));
-        break;
-      case 'ArrowDown':
-        setLogoTransform(prev => ({ ...prev, y: Math.min(100, prev.y + 1) }));
-        break;
-      case '+':
-      case '=':
-        setLogoTransform(prev => ({ ...prev, scale: Math.min(1, prev.scale + 0.05) }));
-        break;
-      case '-':
-        setLogoTransform(prev => ({ ...prev, scale: Math.max(0.1, prev.scale - 0.05) }));
-        break;
-    }
+  const handleLogoTransformChange = (newTransform: { x: number; y: number; scale: number }) => {
+    setLogoTransform(newTransform);
   };
 
   const resetLogoPosition = () => {
@@ -313,130 +118,29 @@ const LogoUploadStep = ({ formData, updateFormData }: LogoUploadStepProps) => {
     <div className="space-y-6">
       <h2 className="text-xl font-bold mb-4">Logo Upload & Mockup Preview</h2>
       
-      {/* Logo Upload Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Upload Your Logo</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="logoUpload">Upload Logo</Label>
-            <Input
-              id="logoUpload"
-              type="file"
-              accept="image/*"
-              onChange={handleLogoUpload}
-              className="hidden"
-            />
-            <Button 
-              variant="outline" 
-              className="w-full h-32 border-dashed"
-              onClick={() => document.getElementById('logoUpload')?.click()}
-              disabled={uploading}
-            >
-              <div className="flex flex-col items-center text-gray-500">
-                <Upload className="h-8 w-8 mb-2" />
-                <span>{uploading ? 'Uploading...' : 'Click to upload logo'}</span>
-                <span className="text-xs mt-1">PNG, JPG, SVG (transparent background recommended)</span>
-              </div>
-            </Button>
-          </div>
-          
-          <div className="space-y-4">
-            <Label htmlFor="message">Message (Optional)</Label>
-            <Textarea
-              id="message"
-              placeholder="Any special requests or details about your sponsorship?"
-              value={formData.message}
-              onChange={handleMessageChange}
-              rows={4}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <LogoUploadSection
+        uploading={uploading}
+        onLogoUpload={handleLogoUpload}
+      />
+
+      <MessageSection
+        message={formData.message}
+        onMessageChange={handleMessageChange}
+      />
 
       {/* Mockup Preview Section */}
       {causeData ? (
         causeData.imageReady && causeData.adminImageUrl ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Cause Preview */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Cause on Tote Preview</CardTitle>
-              </CardHeader>
-              <CardContent className="flex justify-center">
-                <canvas 
-                  ref={causeCanvasRef}
-                  width={400}
-                  height={400}
-                  className="border border-gray-200 rounded-lg max-w-full h-auto"
-                />
-              </CardContent>
-            </Card>
-
-            {/* Final Preview with Logo */}
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle>Final Tote Preview</CardTitle>
-                  {logoPreview && (
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={resetLogoPosition}
-                    >
-                      <RotateCcw className="h-4 w-4 mr-1" />
-                      Reset
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="flex flex-col items-center space-y-4">
-                <div 
-                  className="relative"
-                  onMouseDown={handleMouseDown}
-                  onMouseMove={handleMouseMove}
-                  onMouseUp={handleMouseUp}
-                  onKeyDown={handleKeyDown}
-                  tabIndex={0}
-                  role="application"
-                  aria-label="Interactive logo preview - use arrow keys to move, +/- to resize"
-                >
-                  <canvas 
-                    ref={finalCanvasRef}
-                    width={400}
-                    height={400}
-                    className="border border-gray-200 rounded-lg max-w-full h-auto cursor-move"
-                  />
-                  {logoPreview && (
-                    <div className="absolute inset-0 pointer-events-none">
-                      <div 
-                        className="absolute w-2 h-2 bg-blue-500 rounded-full"
-                        style={{
-                          left: `${logoTransform.x}%`,
-                          top: `${logoTransform.y}%`,
-                          transform: 'translate(-50%, -50%)'
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-                
-                {logoPreview && (
-                  <div className="text-sm text-gray-600 text-center space-y-1">
-                    <p>💡 Drag to move • Use arrow keys for precision</p>
-                    <p>🔍 Press + or - to resize</p>
-                    <p>Scale: {Math.round(logoTransform.scale * 100)}%</p>
-                  </div>
-                )}
-                
-                {!logoPreview && (
-                  <p className="text-gray-400 text-center">
-                    Upload a logo to see the final preview
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+            <CausePreviewCanvas causeData={causeData} />
+            <FinalPreviewCanvas
+              causeData={causeData}
+              logoPreview={logoPreview}
+              logoTransform={logoTransform}
+              onLogoTransformChange={handleLogoTransformChange}
+              onResetLogoPosition={resetLogoPosition}
+              onUpdateFormData={updateFormData}
+            />
           </div>
         ) : (
           <Alert>
