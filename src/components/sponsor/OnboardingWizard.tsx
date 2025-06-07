@@ -36,7 +36,13 @@ const OnboardingWizard = ({
     campaignStartDate: undefined as Date | undefined,
     campaignEndDate: undefined as Date | undefined,
     selectedCities: [] as string[],
-    distributionPoints: [] as string[],
+    distributionPoints: {} as { [city: string]: { 
+      malls: { name: string; totes: number; selected: boolean; }[];
+      parks: { name: string; totes: number; selected: boolean; }[];
+      theatres: { name: string; totes: number; selected: boolean; }[];
+      metroStations: { name: string; totes: number; selected: boolean; }[];
+      schools: { name: string; totes: number; selected: boolean; }[];
+    }},
     demographics: {
       ageGroups: [],
       income: '',
