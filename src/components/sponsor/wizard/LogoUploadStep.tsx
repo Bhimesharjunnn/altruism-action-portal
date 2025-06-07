@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, AlertCircle, Move, RotateCcw } from 'lucide-react';
+import { Upload, AlertCircle, Move, RotateCcw, Info } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -14,105 +14,75 @@ interface LogoUploadStepProps {
     selectedCause: string;
     logoUrl: string;
     message: string;
-    causeImageUrl?: string;
     finalMockupUrl?: string;
     logoTransform?: { x: number; y: number; scale: number };
   };
   updateFormData: (data: Partial<{
     logoUrl: string;
     message: string;
-    causeImageUrl: string;
     finalMockupUrl: string;
     logoTransform: { x: number; y: number; scale: number };
   }>) => void;
 }
 
-// Mock approved causes list
-const approvedCauses = ['1', '2']; // In real app, fetch from API
-
-// Mock tote bag templates
-const toteBagTemplates = {
-  '1': 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-  '2': 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80'
+// Mock data - in real app, fetch from API
+const mockCauseData = {
+  '1': {
+    adminImageUrl: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    totebagTemplateUrl: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+    status: 'sponsored',
+    imageReady: true
+  },
+  '2': {
+    adminImageUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+    totebagTemplateUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+    status: 'sponsored',
+    imageReady: true
+  },
+  '3': {
+    adminImageUrl: null,
+    totebagTemplateUrl: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+    status: 'open',
+    imageReady: false
+  }
 };
 
 const LogoUploadStep = ({ formData, updateFormData }: LogoUploadStepProps) => {
   const { toast } = useToast();
   const [logoPreview, setLogoPreview] = useState<string>(formData.logoUrl);
-  const [causeImagePreview, setCauseImagePreview] = useState<string>(formData.causeImageUrl || '');
-  const [causeImageUrl, setCauseImageUrl] = useState('');
   const [uploading, setUploading] = useState(false);
-  const [uploadingCauseImage, setUploadingCauseImage] = useState(false);
   const [logoTransform, setLogoTransform] = useState(formData.logoTransform || { x: 50, y: 50, scale: 0.3 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [causeData, setCauseData] = useState<any>(null);
   
   const causeCanvasRef = useRef<HTMLCanvasElement>(null);
   const finalCanvasRef = useRef<HTMLCanvasElement>(null);
-  const logoRef = useRef<HTMLImageElement>(null);
-
-  const isApprovedCause = approvedCauses.includes(formData.selectedCause);
 
   useEffect(() => {
-    if (isApprovedCause && causeImagePreview && causeCanvasRef.current) {
+    // Fetch cause data on mount
+    const data = mockCauseData[formData.selectedCause as keyof typeof mockCauseData];
+    setCauseData(data);
+  }, [formData.selectedCause]);
+
+  useEffect(() => {
+    if (causeData?.imageReady && causeData?.adminImageUrl && causeCanvasRef.current) {
       renderCauseCanvas();
     }
-  }, [causeImagePreview, isApprovedCause]);
+  }, [causeData]);
 
   useEffect(() => {
-    if (isApprovedCause && causeImagePreview && logoPreview && finalCanvasRef.current) {
+    if (causeData?.imageReady && causeData?.adminImageUrl && logoPreview && finalCanvasRef.current) {
       renderFinalCanvas();
     }
-  }, [causeImagePreview, logoPreview, logoTransform, isApprovedCause]);
-
-  const validateImageUrl = async (url: string): Promise<boolean> => {
-    try {
-      if (!url.match(/^https?:\/\/.+/)) {
-        toast({
-          title: "Invalid URL",
-          description: "Please enter a valid HTTP or HTTPS URL",
-          variant: "destructive"
-        });
-        return false;
-      }
-
-      const response = await fetch(url, { method: 'HEAD' });
-      if (!response.ok) {
-        toast({
-          title: "Invalid Image",
-          description: "Unable to load image from the provided URL",
-          variant: "destructive"
-        });
-        return false;
-      }
-
-      const contentLength = response.headers.get('content-length');
-      if (contentLength && parseInt(contentLength) > 5 * 1024 * 1024) {
-        toast({
-          title: "File Too Large",
-          description: "Image must be smaller than 5MB",
-          variant: "destructive"
-        });
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to validate image URL",
-        variant: "destructive"
-      });
-      return false;
-    }
-  };
+  }, [causeData, logoPreview, logoTransform]);
 
   const validateImageFile = (file: File): Promise<boolean> => {
     return new Promise((resolve) => {
-      if (!file.type.match(/^image\/(png|jpeg|jpg)$/)) {
+      if (!file.type.match(/^image\/(png|jpeg|jpg|svg)$/)) {
         toast({
           title: "Invalid File Type",
-          description: "Please upload a PNG or JPEG image",
+          description: "Please upload a PNG, JPEG, or SVG image",
           variant: "destructive"
         });
         resolve(false);
@@ -129,28 +99,7 @@ const LogoUploadStep = ({ formData, updateFormData }: LogoUploadStepProps) => {
         return;
       }
 
-      const img = new Image();
-      img.onload = () => {
-        if (img.width < 1000 || img.height < 1000) {
-          toast({
-            title: "Image Too Small",
-            description: "Image must be at least 1000x1000 pixels",
-            variant: "destructive"
-          });
-          resolve(false);
-        } else {
-          resolve(true);
-        }
-      };
-      img.onerror = () => {
-        toast({
-          title: "Invalid Image",
-          description: "Unable to load the selected image",
-          variant: "destructive"
-        });
-        resolve(false);
-      };
-      img.src = URL.createObjectURL(file);
+      resolve(true);
     });
   };
 
@@ -165,51 +114,18 @@ const LogoUploadStep = ({ formData, updateFormData }: LogoUploadStepProps) => {
         const imageUrl = URL.createObjectURL(file);
         setLogoPreview(imageUrl);
         updateFormData({ logoUrl: imageUrl });
-        console.log("Logo URL being set:", imageUrl);
       }
       setUploading(false);
     });
   };
 
-  const handleCauseImageUrlSubmit = async () => {
-    if (!causeImageUrl.trim()) return;
-    
-    setUploadingCauseImage(true);
-    
-    const isValid = await validateImageUrl(causeImageUrl);
-    if (isValid) {
-      setCauseImagePreview(causeImageUrl);
-      updateFormData({ causeImageUrl });
-    }
-    
-    setUploadingCauseImage(false);
-  };
-
-  const handleCauseImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    setUploadingCauseImage(true);
-
-    validateImageFile(file).then((isValid) => {
-      if (isValid) {
-        const imageUrl = URL.createObjectURL(file);
-        setCauseImagePreview(imageUrl);
-        updateFormData({ causeImageUrl: imageUrl });
-      }
-      setUploadingCauseImage(false);
-    });
-  };
-
   const renderCauseCanvas = () => {
     const canvas = causeCanvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !causeData?.adminImageUrl) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const toteBagSrc = toteBagTemplates[formData.selectedCause as keyof typeof toteBagTemplates];
-    
     const toteBag = new Image();
     toteBag.crossOrigin = 'anonymous';
     toteBag.onload = () => {
@@ -219,59 +135,53 @@ const LogoUploadStep = ({ formData, updateFormData }: LogoUploadStepProps) => {
       // Draw tote bag template
       ctx.drawImage(toteBag, 0, 0, 400, 400);
       
-      // Draw cause image if available
-      if (causeImagePreview) {
-        const causeImg = new Image();
-        causeImg.crossOrigin = 'anonymous';
-        causeImg.onload = () => {
-          // Define placeholder rectangle (adjust these values based on your template)
-          const placeholderX = 100;
-          const placeholderY = 150;
-          const placeholderWidth = 200;
-          const placeholderHeight = 150;
-          
-          // Calculate aspect ratio and fit image
-          const imgAspect = causeImg.width / causeImg.height;
-          const placeholderAspect = placeholderWidth / placeholderHeight;
-          
-          let drawWidth, drawHeight, drawX, drawY;
-          
-          if (imgAspect > placeholderAspect) {
-            // Image is wider
-            drawHeight = placeholderHeight;
-            drawWidth = drawHeight * imgAspect;
-            drawX = placeholderX - (drawWidth - placeholderWidth) / 2;
-            drawY = placeholderY;
-          } else {
-            // Image is taller
-            drawWidth = placeholderWidth;
-            drawHeight = drawWidth / imgAspect;
-            drawX = placeholderX;
-            drawY = placeholderY - (drawHeight - placeholderHeight) / 2;
-          }
-          
-          ctx.save();
-          ctx.beginPath();
-          ctx.rect(placeholderX, placeholderY, placeholderWidth, placeholderHeight);
-          ctx.clip();
-          ctx.drawImage(causeImg, drawX, drawY, drawWidth, drawHeight);
-          ctx.restore();
-        };
-        causeImg.src = causeImagePreview;
-      }
+      // Draw admin cause image
+      const causeImg = new Image();
+      causeImg.crossOrigin = 'anonymous';
+      causeImg.onload = () => {
+        // Define placeholder rectangle (adjust based on template)
+        const placeholderX = 100;
+        const placeholderY = 150;
+        const placeholderWidth = 200;
+        const placeholderHeight = 150;
+        
+        // Calculate aspect ratio and fit image
+        const imgAspect = causeImg.width / causeImg.height;
+        const placeholderAspect = placeholderWidth / placeholderHeight;
+        
+        let drawWidth, drawHeight, drawX, drawY;
+        
+        if (imgAspect > placeholderAspect) {
+          drawHeight = placeholderHeight;
+          drawWidth = drawHeight * imgAspect;
+          drawX = placeholderX - (drawWidth - placeholderWidth) / 2;
+          drawY = placeholderY;
+        } else {
+          drawWidth = placeholderWidth;
+          drawHeight = drawWidth / imgAspect;
+          drawX = placeholderX;
+          drawY = placeholderY - (drawHeight - placeholderHeight) / 2;
+        }
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(placeholderX, placeholderY, placeholderWidth, placeholderHeight);
+        ctx.clip();
+        ctx.drawImage(causeImg, drawX, drawY, drawWidth, drawHeight);
+        ctx.restore();
+      };
+      causeImg.src = causeData.adminImageUrl;
     };
-    toteBag.src = toteBagSrc;
+    toteBag.src = causeData.totebagTemplateUrl;
   };
 
   const renderFinalCanvas = () => {
     const canvas = finalCanvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !causeData?.adminImageUrl || !logoPreview) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const toteBagSrc = toteBagTemplates[formData.selectedCause as keyof typeof toteBagTemplates];
-    
     const toteBag = new Image();
     toteBag.crossOrigin = 'anonymous';
     toteBag.onload = () => {
@@ -282,67 +192,62 @@ const LogoUploadStep = ({ formData, updateFormData }: LogoUploadStepProps) => {
       ctx.drawImage(toteBag, 0, 0, 400, 400);
       
       // Draw cause image
-      if (causeImagePreview) {
-        const causeImg = new Image();
-        causeImg.crossOrigin = 'anonymous';
-        causeImg.onload = () => {
-          // Same logic as cause canvas
-          const placeholderX = 100;
-          const placeholderY = 150;
-          const placeholderWidth = 200;
-          const placeholderHeight = 150;
+      const causeImg = new Image();
+      causeImg.crossOrigin = 'anonymous';
+      causeImg.onload = () => {
+        const placeholderX = 100;
+        const placeholderY = 150;
+        const placeholderWidth = 200;
+        const placeholderHeight = 150;
+        
+        const imgAspect = causeImg.width / causeImg.height;
+        const placeholderAspect = placeholderWidth / placeholderHeight;
+        
+        let drawWidth, drawHeight, drawX, drawY;
+        
+        if (imgAspect > placeholderAspect) {
+          drawHeight = placeholderHeight;
+          drawWidth = drawHeight * imgAspect;
+          drawX = placeholderX - (drawWidth - placeholderWidth) / 2;
+          drawY = placeholderY;
+        } else {
+          drawWidth = placeholderWidth;
+          drawHeight = drawWidth / imgAspect;
+          drawX = placeholderX;
+          drawY = placeholderY - (drawHeight - placeholderHeight) / 2;
+        }
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(placeholderX, placeholderY, placeholderWidth, placeholderHeight);
+        ctx.clip();
+        ctx.drawImage(causeImg, drawX, drawY, drawWidth, drawHeight);
+        ctx.restore();
+        
+        // Draw logo
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+        logoImg.onload = () => {
+          const logoWidth = 400 * logoTransform.scale;
+          const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
+          const logoX = (logoTransform.x / 100) * 400 - logoWidth / 2;
+          const logoY = (logoTransform.y / 100) * 400 - logoHeight / 2;
           
-          const imgAspect = causeImg.width / causeImg.height;
-          const placeholderAspect = placeholderWidth / placeholderHeight;
+          ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
           
-          let drawWidth, drawHeight, drawX, drawY;
-          
-          if (imgAspect > placeholderAspect) {
-            drawHeight = placeholderHeight;
-            drawWidth = drawHeight * imgAspect;
-            drawX = placeholderX - (drawWidth - placeholderWidth) / 2;
-            drawY = placeholderY;
-          } else {
-            drawWidth = placeholderWidth;
-            drawHeight = drawWidth / imgAspect;
-            drawX = placeholderX;
-            drawY = placeholderY - (drawHeight - placeholderHeight) / 2;
-          }
-          
-          ctx.save();
-          ctx.beginPath();
-          ctx.rect(placeholderX, placeholderY, placeholderWidth, placeholderHeight);
-          ctx.clip();
-          ctx.drawImage(causeImg, drawX, drawY, drawWidth, drawHeight);
-          ctx.restore();
-          
-          // Draw logo
-          if (logoPreview) {
-            const logoImg = new Image();
-            logoImg.crossOrigin = 'anonymous';
-            logoImg.onload = () => {
-              const logoWidth = 400 * logoTransform.scale;
-              const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
-              const logoX = (logoTransform.x / 100) * 400 - logoWidth / 2;
-              const logoY = (logoTransform.y / 100) * 400 - logoHeight / 2;
-              
-              ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
-              
-              // Export final mockup
-              canvas.toBlob((blob) => {
-                if (blob) {
-                  const url = URL.createObjectURL(blob);
-                  updateFormData({ finalMockupUrl: url, logoTransform });
-                }
-              });
-            };
-            logoImg.src = logoPreview;
-          }
+          // Export final mockup
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              updateFormData({ finalMockupUrl: url, logoTransform });
+            }
+          });
         };
-        causeImg.src = causeImagePreview;
-      }
+        logoImg.src = logoPreview;
+      };
+      causeImg.src = causeData.adminImageUrl;
     };
-    toteBag.src = toteBagSrc;
+    toteBag.src = causeData.totebagTemplateUrl;
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -408,71 +313,10 @@ const LogoUploadStep = ({ formData, updateFormData }: LogoUploadStepProps) => {
     <div className="space-y-6">
       <h2 className="text-xl font-bold mb-4">Logo Upload & Mockup Preview</h2>
       
-      {/* Cause Image Upload Section */}
-      {isApprovedCause ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Cause Image Upload</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="causeImageUrl">Paste Image URL</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="causeImageUrl"
-                    placeholder="https://example.com/image.jpg"
-                    value={causeImageUrl}
-                    onChange={(e) => setCauseImageUrl(e.target.value)}
-                  />
-                  <Button 
-                    onClick={handleCauseImageUrlSubmit}
-                    disabled={uploadingCauseImage}
-                  >
-                    {uploadingCauseImage ? 'Loading...' : 'Load'}
-                  </Button>
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="causeImageUpload">Or Upload File</Label>
-                <Input
-                  id="causeImageUpload"
-                  type="file"
-                  accept="image/png,image/jpeg,image/jpg"
-                  onChange={handleCauseImageUpload}
-                  className="hidden"
-                />
-                <Button 
-                  variant="outline" 
-                  className="w-full h-10 border-dashed"
-                  onClick={() => document.getElementById('causeImageUpload')?.click()}
-                  disabled={uploadingCauseImage}
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  {uploadingCauseImage ? 'Uploading...' : 'Upload Image'}
-                </Button>
-              </div>
-            </div>
-            
-            <div className="text-sm text-gray-500">
-              Requirements: PNG/JPEG, ≤5MB, minimum 1000×1000px
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Cause image upload is only available for approved causes. Your selected cause needs approval before you can upload a custom image.
-          </AlertDescription>
-        </Alert>
-      )}
-
       {/* Logo Upload Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Logo Upload</CardTitle>
+          <CardTitle>Upload Your Logo</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -511,95 +355,102 @@ const LogoUploadStep = ({ formData, updateFormData }: LogoUploadStepProps) => {
         </CardContent>
       </Card>
 
-      {/* Dual Preview Section */}
-      {isApprovedCause && causeImagePreview && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Cause Preview */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Cause on Tote Preview</CardTitle>
-            </CardHeader>
-            <CardContent className="flex justify-center">
-              <canvas 
-                ref={causeCanvasRef}
-                width={400}
-                height={400}
-                className="border border-gray-200 rounded-lg max-w-full h-auto"
-              />
-            </CardContent>
-          </Card>
-
-          {/* Final Preview with Logo */}
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Final Tote Preview</CardTitle>
-                {logoPreview && (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={resetLogoPosition}
-                  >
-                    <RotateCcw className="h-4 w-4 mr-1" />
-                    Reset
-                  </Button>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center space-y-4">
-              <div 
-                className="relative"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onKeyDown={handleKeyDown}
-                tabIndex={0}
-                role="application"
-                aria-label="Interactive logo preview - use arrow keys to move, +/- to resize"
-              >
+      {/* Mockup Preview Section */}
+      {causeData ? (
+        causeData.imageReady && causeData.adminImageUrl ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Cause Preview */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Cause on Tote Preview</CardTitle>
+              </CardHeader>
+              <CardContent className="flex justify-center">
                 <canvas 
-                  ref={finalCanvasRef}
+                  ref={causeCanvasRef}
                   width={400}
                   height={400}
-                  className="border border-gray-200 rounded-lg max-w-full h-auto cursor-move"
+                  className="border border-gray-200 rounded-lg max-w-full h-auto"
                 />
+              </CardContent>
+            </Card>
+
+            {/* Final Preview with Logo */}
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Final Tote Preview</CardTitle>
+                  {logoPreview && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={resetLogoPosition}
+                    >
+                      <RotateCcw className="h-4 w-4 mr-1" />
+                      Reset
+                    </Button>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center space-y-4">
+                <div 
+                  className="relative"
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onKeyDown={handleKeyDown}
+                  tabIndex={0}
+                  role="application"
+                  aria-label="Interactive logo preview - use arrow keys to move, +/- to resize"
+                >
+                  <canvas 
+                    ref={finalCanvasRef}
+                    width={400}
+                    height={400}
+                    className="border border-gray-200 rounded-lg max-w-full h-auto cursor-move"
+                  />
+                  {logoPreview && (
+                    <div className="absolute inset-0 pointer-events-none">
+                      <div 
+                        className="absolute w-2 h-2 bg-blue-500 rounded-full"
+                        style={{
+                          left: `${logoTransform.x}%`,
+                          top: `${logoTransform.y}%`,
+                          transform: 'translate(-50%, -50%)'
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+                
                 {logoPreview && (
-                  <div className="absolute inset-0 pointer-events-none">
-                    <div 
-                      className="absolute w-2 h-2 bg-blue-500 rounded-full"
-                      style={{
-                        left: `${logoTransform.x}%`,
-                        top: `${logoTransform.y}%`,
-                        transform: 'translate(-50%, -50%)'
-                      }}
-                    />
+                  <div className="text-sm text-gray-600 text-center space-y-1">
+                    <p>💡 Drag to move • Use arrow keys for precision</p>
+                    <p>🔍 Press + or - to resize</p>
+                    <p>Scale: {Math.round(logoTransform.scale * 100)}%</p>
                   </div>
                 )}
-              </div>
-              
-              {logoPreview && (
-                <div className="text-sm text-gray-600 text-center space-y-1">
-                  <p>💡 Drag to move • Use arrow keys for precision</p>
-                  <p>🔍 Press + or - to resize • Shift+drag corner for proportional resize</p>
-                  <p>Scale: {Math.round(logoTransform.scale * 100)}%</p>
-                </div>
-              )}
-              
-              {!logoPreview && (
-                <p className="text-gray-400 text-center">
-                  Upload a logo to see the final preview
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {!isApprovedCause && (
+                
+                {!logoPreview && (
+                  <p className="text-gray-400 text-center">
+                    Upload a logo to see the final preview
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              Cause artwork pending admin upload. The mockup preview will be available once the admin uploads the cause image for this campaign.
+            </AlertDescription>
+          </Alert>
+        )
+      ) : (
         <Card>
           <CardContent className="p-6 text-center">
             <p className="text-gray-500">
-              Preview will be available once your cause is approved and you upload a cause image.
+              Loading cause data...
             </p>
           </CardContent>
         </Card>
