@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -61,7 +62,7 @@ const Index = () => {
                   Browse Causes
                 </Button>
                 <Button 
-                  onClick={() => navigate('/sponsor/new')} 
+                  onClick={() => navigate('/sponsor')} 
                   variant="outline" 
                   size="lg"
                   className="border-primary-600 text-primary-600 hover:bg-primary-50"
@@ -124,7 +125,7 @@ const Index = () => {
                     </div>
                   </div>
                   <Button 
-                    onClick={() => navigate(`/cause/${cause.id}`)} 
+                    onClick={() => navigate(`/causes/${cause.id}`)} 
                     className="w-full"
                     variant="outline"
                   >
@@ -232,7 +233,7 @@ const Index = () => {
               Browse Causes
             </Button>
             <Button 
-              onClick={() => navigate('/sponsor/new')} 
+              onClick={() => navigate('/sponsor')} 
               variant="outline" 
               size="lg"
               className="border-white text-white hover:bg-primary-700"

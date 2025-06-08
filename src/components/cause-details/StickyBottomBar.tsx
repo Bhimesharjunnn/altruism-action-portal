@@ -2,13 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import type { Cause } from '@/types';
 
 interface StickyBottomBarProps {
-  onDonate: () => void;
-  onLearnMore: () => void;
+  cause: Cause;
 }
 
-const StickyBottomBar = ({ onDonate, onLearnMore }: StickyBottomBarProps) => {
+const StickyBottomBar = ({ cause }: StickyBottomBarProps) => {
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -21,6 +23,14 @@ const StickyBottomBar = ({ onDonate, onLearnMore }: StickyBottomBarProps) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSponsor = () => {
+    navigate(`/sponsor?causeId=${cause._id}`);
+  };
+
+  const handleLearnMore = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <AnimatePresence>
@@ -41,16 +51,16 @@ const StickyBottomBar = ({ onDonate, onLearnMore }: StickyBottomBarProps) => {
               <div className="flex gap-3">
                 <Button
                   variant="outline"
-                  onClick={onLearnMore}
+                  onClick={handleLearnMore}
                   className="px-6"
                 >
                   Learn More
                 </Button>
                 <Button
-                  onClick={onDonate}
+                  onClick={handleSponsor}
                   className="px-8 bg-primary-600 hover:bg-primary-700"
                 >
-                  Donate Now
+                  Sponsor This Cause
                 </Button>
               </div>
             </div>
