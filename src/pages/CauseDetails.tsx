@@ -69,17 +69,17 @@ const CauseDetails = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
-        <CauseDetailsHeader cause={cause} />
+        <CauseDetailsHeader />
         
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
-              <CauseImageAndStory cause={cause} />
-              <ImpactStats cause={cause} />
-              <SponsorShowcase cause={cause} />
-              <DetailedDescription cause={cause} />
-              <TransparencyTrust />
-              <FinalCallout cause={cause} />
+              <CauseImageAndStory />
+              <ImpactStats />
+              <SponsorShowcase />
+              <DetailedDescription />
+              <TransparencyTrust partnerLogos={[]} />
+              <FinalCallout />
             </div>
             
             <div className="lg:col-span-1">
