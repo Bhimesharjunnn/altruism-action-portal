@@ -66,20 +66,36 @@ const CauseDetails = () => {
     );
   }
 
+  const mockStats = [
+    { label: 'Communities Reached', value: '24' },
+    { label: 'Water Systems Built', value: '8' },
+    { label: 'People Served', value: '2,400' }
+  ];
+
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
-        <CauseDetailsHeader />
+        <CauseDetailsHeader 
+          title={cause.title}
+          description={cause.description}
+        />
         
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
-              <CauseImageAndStory />
-              <ImpactStats />
-              <SponsorShowcase />
-              <DetailedDescription />
+              <CauseImageAndStory 
+                imageUrl={cause.imageUrl}
+                title={cause.title}
+                story={cause.story}
+              />
+              <ImpactStats stats={mockStats} />
+              <SponsorShowcase sponsors={cause.sponsors} />
+              <DetailedDescription content={cause.description} />
               <TransparencyTrust partnerLogos={[]} />
-              <FinalCallout />
+              <FinalCallout 
+                title="Ready to make a difference?"
+                onDonate={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              />
             </div>
             
             <div className="lg:col-span-1">

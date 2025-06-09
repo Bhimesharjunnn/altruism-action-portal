@@ -46,6 +46,7 @@ function App() {
           <Route path="/causes/:id" element={<CauseDetails />} />
           <Route path="/create-cause" element={<CreateCause />} />
           <Route path="/sponsor" element={<SponsorForm />} />
+          <Route path="/sponsor/new" element={<SponsorForm />} />
           <Route path="/why-sponsor" element={<WhySponsor />} />
           <Route path="/why-claim" element={<WhyClaim />} />
           <Route path="/claim/:id" element={<ClaimForm />} />

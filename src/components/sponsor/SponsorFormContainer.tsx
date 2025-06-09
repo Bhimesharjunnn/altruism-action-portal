@@ -19,6 +19,7 @@ const SponsorFormContainer: React.FC<SponsorFormContainerProps> = ({ causeId }) 
     setIsLoading(true);
     
     try {
+      console.log('Submitting sponsor form data:', formData);
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -29,6 +30,7 @@ const SponsorFormContainer: React.FC<SponsorFormContainerProps> = ({ causeId }) 
       
       navigate('/dashboard/sponsor');
     } catch (error) {
+      console.error('Error submitting sponsorship:', error);
       toast({
         title: "Submission Error",
         description: "There was a problem submitting your request. Please try again.",
